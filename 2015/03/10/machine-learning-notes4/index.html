@@ -1,0 +1,712 @@
+<!doctype html>
+<html class="theme-next use-motion theme-next-mist">
+<head>
+    
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.4"/>
+
+
+
+
+  <meta name="keywords" content="Logistic回归,python,机器学习,梯度下降法,算法," />
+
+
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.4" />
+
+
+<meta name="description" content="Logistic回归搜了下维基百科[2]，发现关于逻辑回归的介绍特别长，实在没有心看下去。真不懂一个简单的概念要讲那么多话干嘛。简单说来，逻辑回归是针对线性回归讲的。对于线性回归，我们需要找到一个回归系数$\mathbf{w}=[w_0, w_1, …, w_n]^T$，来确定离散点的线性关系：$z(\mathbf{x})=w_0+w_1x_1+…+w_nx_n$，其中$z$为输出结果，$\mat">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Logistic回归分类">
+<meta property="og:url" content="http://edmund.xyz/2015/03/10/machine-learning-notes4/index.html">
+<meta property="og:site_name" content="Edmund">
+<meta property="og:description" content="Logistic回归搜了下维基百科[2]，发现关于逻辑回归的介绍特别长，实在没有心看下去。真不懂一个简单的概念要讲那么多话干嘛。简单说来，逻辑回归是针对线性回归讲的。对于线性回归，我们需要找到一个回归系数$\mathbf{w}=[w_0, w_1, …, w_n]^T$，来确定离散点的线性关系：$z(\mathbf{x})=w_0+w_1x_1+…+w_nx_n$，其中$z$为输出结果，$\mat">
+<meta property="og:image" content="http://edmund.xyz/images/MachineLearninginAction/ml_chap5_step.png">
+<meta property="og:image" content="http://edmund.xyz/images/MachineLearninginAction/ml_chap5_Sigmoid.png">
+<meta property="og:image" content="http://edmund.xyz/images/MachineLearninginAction/ml_chap5_figure1.png">
+<meta property="og:image" content="http://edmund.xyz/images/MachineLearninginAction/ml_chap5_figure2.png">
+<meta property="og:image" content="http://edmund.xyz/images/MachineLearninginAction/ml_chap5_figure3.png">
+<meta property="og:image" content="http://edmund.xyz/images/MachineLearninginAction/ml_chap5_figure4.png">
+<meta property="og:image" content="http://edmund.xyz/images/MachineLearninginAction/ml_chap5_figure5.png">
+<meta property="og:updated_time" content="2015-07-15T09:58:11.488Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Logistic回归分类">
+<meta name="twitter:description" content="Logistic回归搜了下维基百科[2]，发现关于逻辑回归的介绍特别长，实在没有心看下去。真不懂一个简单的概念要讲那么多话干嘛。简单说来，逻辑回归是针对线性回归讲的。对于线性回归，我们需要找到一个回归系数$\mathbf{w}=[w_0, w_1, …, w_n]^T$，来确定离散点的线性关系：$z(\mathbf{x})=w_0+w_1x_1+…+w_nx_n$，其中$z$为输出结果，$\mat">
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'hide'
+  };
+</script>
+
+    <title> Logistic回归分类 // Edmund </title>
+</head>
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+<!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-58837095-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+<div class="container one-column page-post-detail">
+    <div class="headband"></div>
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand" rel="start">
+      <span class="logo">
+        <i class="icon-logo"></i>
+      </span>
+      <span class="site-title">Edmund</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon icon-home"></i> <br />
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            <i class="menu-item-icon icon-categories"></i> <br />
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            <i class="menu-item-icon icon-tags"></i> <br />
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            <i class="menu-item-icon icon-archives"></i> <br />
+            归档
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+        </div>
+    </header>
+
+    <main id="main" class="main">
+        <div class="main-inner">
+            <div id="content" class="content">
+                
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              Logistic回归分类
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2015-03-10T11:10:57+08:00" content="2015-03-10">
+            2015-03-10
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a href="/categories/学习笔记/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a></span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2015/03/10/machine-learning-notes4/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2015/03/10/machine-learning-notes4/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><h2 id="Logistic回归">Logistic回归</h2><p>搜了下维基百科[2]，发现关于逻辑回归的介绍特别长，实在没有心看下去。真不懂一个简单的概念要讲那么多话干嘛。简单说来，逻辑回归是针对线性回归讲的。对于线性回归，我们需要找到一个回归系数$\mathbf{w}=[w_0, w_1, …, w_n]^T$，来确定离散点的线性关系：$z(\mathbf{x})=w_0+w_1x_1+…+w_nx_n$，其中$z$为输出结果，$\mathbf{x}=[x_1, x_2, …, x_n]^T$为特征。</p>
+<p>那么，推广到分类问题，对于某特征的离散点$\mathbf{\xi}_i$，可以用$z(\mathbf{x})=w_0+w_1x_1+…+w_nx_n$来对它们进行分割：无非就是$z(\mathbf{\mathbf{\xi}_i})\geqslant0$和$z(\mathbf{\mathbf{\xi}_i})&lt;0$。怎么让$z\geqslant0$和$z&lt;0$变成0和1这两个数来表示呢？我们需要进行一个映射，首先想的的是单位阶跃函数：</p>
+<a id="more"></a>
+<p><img src="/images/MachineLearninginAction/ml_chap5_step.png" alt="Heaviside"></p>
+<p>该函数在跳跃点上从0瞬间跳跃到1，但是这个瞬间跳跃过程有时很难处理。因此通常使用<code>Sigmoid函数</code>：<br>$$\sigma(z)=\frac{1}{1+e^{-z}}$$</p>
+<p><img src="/images/MachineLearninginAction/ml_chap5_Sigmoid.png" alt="Sigmoid"></p>
+<p>不难看出$\sigma(z)$的一些性质：$\sigma(z)\in(0, 1)$、$\sigma(0)=0.5$。对于分类问题，就可以转换为找到最佳的回归系数$\mathbf{w}=[w_0, w_1, …, w_n]^T$，使得分类标签$y\in(0, 1)$尽可能接近实际分类，其中$z=\mathbf{w}^T\mathbf{x}$。如何找到最优的$\mathbf{w}$，将用到梯度上升法。</p>
+<hr>
+<h2 id="梯度上升法">梯度上升法</h2><p><code>梯度上升法</code>基于的思想是：要找到某函数的最大值，最好的方法是沿着该函数的梯度 方向探寻。所谓梯度，就是多元函数的各个变量的偏导写到一个向量中：</p>
+<p>$$\nabla f(x_1,x_2,…,x_n)=[\frac{\partial f(\cdot)}{\partial x_1}\ \frac{\partial f(\cdot)}{\partial x_2}\ …\ \frac{\partial f(\cdot)}{\partial x_n}]^T.$$</p>
+<p>这样就可以定量的看出函数$f(\cdot)$在某个点上的“变化率”。梯度上升法将函数自变量“加上”梯度乘以某个常数：<br>$$\mathbf{x}=\mathbf{x}+\alpha\nabla f(\cdot),$$不断的迭代这样的式子，函数值趋于极大值。同样梯度下降法则是用减号，函数值趋于极小值：<br>$$\mathbf{x}=\mathbf{x}-\alpha\nabla f(\cdot),$$其中$\alpha$为正实数，记为步长。</p>
+<hr>
+<h2 id="最优指标">最优指标</h2><p>对于线性回归，通常依据最小二乘法作为最优性能指标：<br>$$<br>J(w)=\frac{1}{2}\sum_{i=1}^m(\sigma_w(z(\mathbf{x}^{(i)}))-y^{(i)})^2.<br>$$</p>
+<p>同样，对于逻辑回归，如果也用最小二乘法表达式就会发现$J(w)$为非凸函数，此时就存在很多局部极值点，就无法用梯度迭代得到最终的参数[3]。因此必须重新定义一种性能指标：<br>$$<br>cost(w)=<br>\begin{cases}<br>\log(\sigma_w(z(\mathbf{x}^{(i)}))), &amp; \text{if $c=1$} \\<br>\log(1-\sigma_w(z(\mathbf{x}^{(i)}))), &amp; \text{if $c=0$}.<br>\end{cases}<br>$$也即<br>$$<br>cost(w)=c*\log(\sigma_w(z(\mathbf{x}^{(i)})))+(1-c)\log(1-\sigma_w(z(\mathbf{x}^{(i)}))).<br>$$</p>
+<p>总体的最优性能指标可以表示为：<br>$$<br>J(w)=\sum_{i=1}^m\left[c^{(i)}*\log(\sigma_w(z(\mathbf{x}^{(i)})))+(1-c^{(i)})\log(1-\sigma_w(z(\mathbf{x}^{(i)})))\right].<br>$$</p>
+<p>因此，可以得到$J(w)$的梯度[4]：<br>$$<br>\nabla J(w)=<br>\begin{bmatrix}<br>\Sigma(y^{(i)}-h_w(\mathbf{x}^{(i)}))x_1^{(i)} \\<br>\Sigma(y^{(i)}-h_w(\mathbf{x}^{(i)}))x_2^{(i)} \\<br>\vdots \\<br>\Sigma(y^{(i)}-h_w(\mathbf{x}^{(i)}))x_n^{(i)}<br>\end{bmatrix}<br>=[\mathbf{x}^{(1)}\ \mathbf{x}^{(2)}\ …\ \mathbf{x}^{(m)}]<br>\cdot<br>\begin{bmatrix}<br>y^{(1)}-h_w(\mathbf{x}^{(1)}) \\<br>y^{(2)}-h_w(\mathbf{x}^{(2)}) \\<br>\vdots \\<br>y^{(m)}-h_w(\mathbf{x}^{(m)})<br>\end{bmatrix},<br>$$<br>其中，$h_w(\cdot)=\sigma_w(z(\cdot))$。于是可以给出迭代公式：<br>$$<br>\mathbf{w}=\mathbf{w}+\alpha\nabla J(w)<br>$$</p>
+<hr>
+<h2 id="梯度上升法简单应用">梯度上升法简单应用</h2><p><strong>训练参数</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> numpy <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载数据</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">loadDataSet</span><span class="params">()</span>:</span></span><br><span class="line">    dataMat = [] <span class="comment"># 数据</span></span><br><span class="line">    labelMat = [] <span class="comment"># 类别</span></span><br><span class="line">    fr = open(<span class="string">'testSet.txt'</span>)</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> fr.readlines():</span><br><span class="line">        lineArr = line.strip().split()</span><br><span class="line">        dataMat.append([<span class="number">1.0</span>, float(lineArr[<span class="number">0</span>]), float(lineArr[<span class="number">1</span>])])</span><br><span class="line">        labelMat.append(int(lineArr[<span class="number">2</span>]))</span><br><span class="line">    fr.close()</span><br><span class="line">    <span class="keyword">return</span> dataMat,labelMat</span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算sigmoid函数</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sigmoid</span><span class="params">(inX)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">1.0</span>/(<span class="number">1.0</span>+exp(-inX))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gradAscent</span><span class="params">(dataMatIn, classLabels)</span>:</span></span><br><span class="line">    dataMatrix = mat(dataMatIn) <span class="comment"># 列表转换为矩阵</span></span><br><span class="line">    labelMat = mat(classLabels).transpose() <span class="comment"># 列表转换为矩阵</span></span><br><span class="line">    m,n = shape(dataMatrix) <span class="comment"># m为样本个数，n为特征个数</span></span><br><span class="line">    alpha = <span class="number">0.001</span></span><br><span class="line">    maxCycles = <span class="number">500</span></span><br><span class="line">    wei = ones(n) <span class="comment"># 记录所有w</span></span><br><span class="line">    weights = ones((n,<span class="number">1</span>))</span><br><span class="line">    <span class="keyword">for</span> k <span class="keyword">in</span> range(maxCycles): <span class="comment"># 循环迭代500次</span></span><br><span class="line">        h = sigmoid(dataMatrix*weights) <span class="comment"># h_w</span></span><br><span class="line">        error = (labelMat - h) <span class="comment"># 是一个m*1的列向量</span></span><br><span class="line">        weights = weights+alpha*dataMatrix.transpose()*error <span class="comment"># weights是一个n*1的列向量</span></span><br><span class="line">        wei = row_stack((wei,weights.getA()[:,<span class="number">0</span>]))</span><br><span class="line">    <span class="keyword">return</span> weights.getA() <span class="comment"># 矩阵转数组</span></span><br></pre></td></tr></table></figure>
+<p>得到相应的$\mathbf{w}$为<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">matrix([[ <span class="number">4.12414349</span>],</span><br><span class="line">        [ <span class="number">0.48007329</span>],</span><br><span class="line">        [-<span class="number">0.6168482</span> ]])</span><br></pre></td></tr></table></figure></p>
+<p><strong>分割曲线</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">plotBestFit</span><span class="params">(weights)</span>:</span></span><br><span class="line">    weights = weights.getA() <span class="comment"># 矩阵转数组</span></span><br><span class="line">    dataMat,labelMat=loadDataSet()</span><br><span class="line">    dataArr = array(dataMat)</span><br><span class="line">    n = shape(dataArr)[<span class="number">0</span>] </span><br><span class="line">    xcord1 = []; ycord1 = []</span><br><span class="line">    xcord2 = []; ycord2 = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(n):</span><br><span class="line">        <span class="keyword">if</span> int(labelMat[i])== <span class="number">1</span>:</span><br><span class="line">            xcord1.append(dataArr[i,<span class="number">1</span>]); ycord1.append(dataArr[i,<span class="number">2</span>])</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            xcord2.append(dataArr[i,<span class="number">1</span>]); ycord2.append(dataArr[i,<span class="number">2</span>])</span><br><span class="line">    <span class="comment"># 做散点图</span></span><br><span class="line">    fig = plt.figure()</span><br><span class="line">    ax = fig.add_subplot(<span class="number">111</span>)</span><br><span class="line">    ax.scatter(xcord1, ycord1, s=<span class="number">30</span>, c=<span class="string">'red'</span>, marker=<span class="string">'s'</span>)</span><br><span class="line">    ax.scatter(xcord2, ycord2, s=<span class="number">30</span>, c=<span class="string">'green'</span>)</span><br><span class="line">    <span class="comment"># 做曲线</span></span><br><span class="line">    x = arange(-<span class="number">3.0</span>, <span class="number">3.0</span>, <span class="number">0.1</span>)</span><br><span class="line">    y = (-weights[<span class="number">0</span>]-weights[<span class="number">1</span>]*x)/weights[<span class="number">2</span>]</span><br><span class="line">    ax.plot(x, y)</span><br><span class="line">    plt.xlabel(<span class="string">'$X_1$'</span>); plt.ylabel(<span class="string">'$X_2$'</span>);</span><br><span class="line">    plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="/images/MachineLearninginAction/ml_chap5_figure1.png" alt="weights1"></p>
+<hr>
+<h2 id="算法改进：随机梯度上升">算法改进：随机梯度上升</h2><p>梯度上升算法在每次更新回归系数时都需要遍历整个数据集，该方法的缺点是计算复杂度太高。一种改进方法是一次仅用一个样本点来更新回归系数，该方法称为<code>随机梯度上升</code>算法。</p>
+<p><strong>算法改进1</strong></p>
+<p>该算法是在线学习算法，不需要每次迭代都加载全部数据。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">stocGradAscent0</span><span class="params">(dataMatIn, classLabels)</span>:</span></span><br><span class="line">    dataMatrix = array(dataMatIn)</span><br><span class="line">    m,n = shape(dataMatrix) <span class="comment"># m为样本个数，n为特征个数</span></span><br><span class="line">    alpha = <span class="number">0.01</span></span><br><span class="line">    wei = ones(n) <span class="comment"># 记录所有回归系数w</span></span><br><span class="line">    weights = ones(n)</span><br><span class="line">    <span class="comment"># 在线修正，随着输入样本不断调整回归系数w值</span></span><br><span class="line">    <span class="keyword">for</span> p <span class="keyword">in</span> range(<span class="number">10</span>):</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(m):</span><br><span class="line">        <span class="comment"># 变量h_i和误差error都是数值，而前者则是向量</span></span><br><span class="line">            h = sigmoid(sum(dataMatrix[i]*weights))</span><br><span class="line">            error = classLabels[i] - h</span><br><span class="line">            weights = weights + alpha*error*dataMatrix[i]</span><br><span class="line">            wei = row_stack((wei,weights))</span><br><span class="line">    <span class="keyword">return</span> weights</span><br></pre></td></tr></table></figure>
+<p>100次迭代运行结果：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="prompt">&gt;&gt;&gt; </span>weights</span><br><span class="line">array([ <span class="number">1.01702007</span>,  <span class="number">0.85914348</span>, -<span class="number">0.36579921</span>])</span><br></pre></td></tr></table></figure></p>
+<p><img src="/images/MachineLearninginAction/ml_chap5_figure2.png" alt="weights20"></p>
+<p>该算法缺点是错误率高，但是多走几次效果应该会好点（每次运算都用上一次的回归系数$w$作为初值），10次操作后，结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">weights =&#10;array([ 1.01702007,  0.85914348, -0.36579921])&#10;array([ 1.17261723,  0.72875277, -0.36695323])&#10;array([ 1.31457005,  0.62706732, -0.37029688])&#10;array([ 1.44480714,  0.54984974, -0.37548964])&#10;array([ 1.56520952,  0.49236137, -0.38205668])&#10;array([ 1.67739908,  0.45022307, -0.38958554])&#10;array([ 1.78268265,  0.41980268, -0.39775225])&#10;array([ 1.88208402,  0.39825176, -0.40631553])&#10;array([ 1.97640280,  0.38339427, -0.41510039])&#10;array([ 2.06626973,  0.37358520, -0.42398160])</span><br></pre></td></tr></table></figure>
+<p><img src="/images/MachineLearninginAction/ml_chap5_figure3.png" alt="weights21"></p>
+<p>记录回归系数$w$与迭代次数的关系，可以看出迭代10000次之后$w_0$依然没有趋于稳定</p>
+<p><img src="/images/MachineLearninginAction/ml_chap5_figure4.png" alt="weights22"></p>
+<p><strong>算法改进2</strong></p>
+<p>针对改进算法1收敛速度慢，而且分类波动较大（存在一些不能正确分类的样本点）的问题，我们给出改进算法2：</p>
+<ol>
+<li>使用渐变步长：$\alpha=4/(1+j+i)+0.0001$，以减少数据波动或者高频波动。这样当$j\ll\max(i)$时 ，$\alpha$就不是严格下 降的，这样避免参数的严格下降也常见于模拟退火算法等其他优化算法中。</li>
+<li>随机选取样本来更新回归系数，这种方法将减少周期性的波动。</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">stocGradAscent1</span><span class="params">(dataMatIn, classLabels, numIter=<span class="number">100</span>)</span>:</span></span><br><span class="line">    dataMatrix = array(dataMatIn)</span><br><span class="line">    m,n = shape(dataMatrix)</span><br><span class="line">    wei = ones(n)</span><br><span class="line">    weights = ones(n)</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> range(numIter):</span><br><span class="line">        dataIndex = range(m)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(m):</span><br><span class="line">            alpha = <span class="number">4</span>/(<span class="number">1.0</span>+j+i)+<span class="number">0.0001</span> <span class="comment"># apha衰减，但不为0</span></span><br><span class="line">            randIndex = int(random.uniform(<span class="number">0</span>,len(dataIndex)))<span class="comment"># 随机选取样本来更新回归系数</span></span><br><span class="line">            h = sigmoid(sum(dataMatrix[randIndex]*weights))</span><br><span class="line">            error = classLabels[randIndex] - h</span><br><span class="line">            weights = weights+alpha*error*dataMatrix[randIndex]</span><br><span class="line">            wei = row_stack((wei,weights))</span><br><span class="line">            <span class="keyword">del</span>(dataIndex[randIndex])</span><br><span class="line">    <span class="keyword">return</span> weights</span><br></pre></td></tr></table></figure>
+<p>迭代10000次，可以看出有较快的收敛速度和较小的波动。</p>
+<p><img src="/images/MachineLearninginAction/ml_chap5_figure5.png" alt="weights3"></p>
+<hr>
+<h2 id="疝气病症预测病马的死亡率">疝气病症预测病马的死亡率</h2><ol>
+<li>UCI数据集：368个样本，28个特征。</li>
+<li>数据存在问题：部分指标主观和难以测量，数据集中有30%的值是缺失的。</li>
+</ol>
+<p><strong>缺失数据处理</strong></p>
+<p>一般来说有这么几种方法处理缺失值：</p>
+<ol>
+<li>忽略有缺失值的样本</li>
+<li>使用可用特征的均值来填补缺失值</li>
+<li>使用特殊值来填补缺失值，如-1</li>
+<li>使用相似样本的均值添补缺失值</li>
+<li>使用另外的机器学习算法预测缺失值</li>
+</ol>
+<p>特征缺失：可以采用0填充，因为用0在更新$w$的时候不会产生更新。此外，$\sigma(0)=0.5$不具有任何倾向性，对结果也不会产生影响。</p>
+<p>类别缺失：简单做法是将该条数据丢弃。因为类别标签与特征不同，很难确定采用某个合适的值来替换。</p>
+<p><strong>分类函数</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">classifyVector</span><span class="params">(inX, weights)</span>:</span></span><br><span class="line">    prob = sigmoid(sum(inX*weights))</span><br><span class="line">    <span class="keyword">if</span> prob &gt; <span class="number">0.5</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1.0</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0.0</span></span><br></pre></td></tr></table></figure>
+<p><strong>数据测试</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">colicTest</span><span class="params">()</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 数据收集&amp;训练</span></span><br><span class="line">    frTrain = open(<span class="string">'horseColicTraining.txt'</span>)</span><br><span class="line">    trainingSet = []</span><br><span class="line">    trainingLabels = []</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> frTrain.readlines():</span><br><span class="line">        currLine = line.strip().split(<span class="string">'\t'</span>)</span><br><span class="line">        lineArr =[]</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">21</span>):</span><br><span class="line">            lineArr.append(float(currLine[i]))</span><br><span class="line">        trainingSet.append(lineArr)</span><br><span class="line">        trainingLabels.append(float(currLine[<span class="number">21</span>]))</span><br><span class="line">    trainWeights = stocGradAscent1(array(trainingSet), trainingLabels, <span class="number">1000</span>)</span><br><span class="line">    errorCount = <span class="number">0</span></span><br><span class="line">    numTestVec = <span class="number">0.0</span></span><br><span class="line">    frTrain.close()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 数据收集&amp;测试</span></span><br><span class="line">    frTest = open(<span class="string">'horseColicTest.txt'</span>)</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> frTest.readlines():</span><br><span class="line">        numTestVec += <span class="number">1.0</span></span><br><span class="line">        currLine = line.strip().split(<span class="string">'\t'</span>)</span><br><span class="line">        lineArr =[]</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">21</span>):</span><br><span class="line">            lineArr.append(float(currLine[i]))</span><br><span class="line">        <span class="keyword">if</span> int(classifyVector(array(lineArr), trainWeights))!= int(currLine[<span class="number">21</span>]):</span><br><span class="line">            errorCount += <span class="number">1</span></span><br><span class="line">    frTest.close()</span><br><span class="line">    errorRate = (float(errorCount)/numTestVec)</span><br><span class="line">    <span class="keyword">print</span> <span class="string">"the error rate of this test is: %f"</span> % errorRate</span><br><span class="line">    <span class="keyword">return</span> errorRate</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">multiTest</span><span class="params">()</span>:</span></span><br><span class="line">    numTests = <span class="number">10</span></span><br><span class="line">    errorSum=<span class="number">0.0</span></span><br><span class="line">    <span class="keyword">for</span> k <span class="keyword">in</span> range(numTests):</span><br><span class="line">        errorSum += colicTest()</span><br><span class="line">    <span class="keyword">print</span> <span class="string">"after %d iterations the average error rate is: %f"</span></span><br><span class="line">        % (numTests, errorSum/float(numTests))</span><br></pre></td></tr></table></figure>
+<p>运行结果：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="prompt">&gt;&gt;&gt; </span>multiTest()</span><br><span class="line">the error rate of this test <span class="keyword">is</span>: <span class="number">0.417910</span></span><br><span class="line">the error rate of this test <span class="keyword">is</span>: <span class="number">0.298507</span></span><br><span class="line">the error rate of this test <span class="keyword">is</span>: <span class="number">0.343284</span></span><br><span class="line">the error rate of this test <span class="keyword">is</span>: <span class="number">0.328358</span></span><br><span class="line">the error rate of this test <span class="keyword">is</span>: <span class="number">0.313433</span></span><br><span class="line">the error rate of this test <span class="keyword">is</span>: <span class="number">0.417910</span></span><br><span class="line">the error rate of this test <span class="keyword">is</span>: <span class="number">0.373134</span></span><br><span class="line">the error rate of this test <span class="keyword">is</span>: <span class="number">0.298507</span></span><br><span class="line">the error rate of this test <span class="keyword">is</span>: <span class="number">0.402985</span></span><br><span class="line">the error rate of this test <span class="keyword">is</span>: <span class="number">0.373134</span></span><br><span class="line">after <span class="number">10</span> iterations the average error rate <span class="keyword">is</span>: <span class="number">0.356716</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<h2 id="参考文献">参考文献</h2><p>[1] P. Harrington, Machine Learning in Action[M]. Greenwich, CT, USA: Manning, 2012.<br>[2] <a href="http://en.wikipedia.org/wiki/Logistic_regression" target="_blank" rel="external">http://en.wikipedia.org/wiki/Logistic_regression</a><br>[3] <a href="http://cs229.stanford.edu/" target="_blank" rel="external">http://cs229.stanford.edu/</a><br>[4] <a href="http://blog.csdn.net/lu597203933/article/details/38468303" target="_blank" rel="external">http://blog.csdn.net/lu597203933/article/details/38468303</a></p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Logistic回归/" rel="tag">#Logistic回归</a>
+          
+            <a href="/tags/python/" rel="tag">#python</a>
+          
+            <a href="/tags/机器学习/" rel="tag">#机器学习</a>
+          
+            <a href="/tags/梯度下降法/" rel="tag">#梯度下降法</a>
+          
+            <a href="/tags/算法/" rel="tag">#算法</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/03/17/machine-learning-notes5/" rel="prev">支持向量机</a>
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/03/05/machine-learning-notes3/" rel="next">朴素贝叶斯分类</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+            </div>
+
+            
+
+            
+              <div class="comments" id="comments">
+                
+                  <div class="ds-thread" data-thread-key="2015/03/10/machine-learning-notes4/"
+                       data-title="Logistic回归分类" data-url="http://edmund.xyz/2015/03/10/machine-learning-notes4/">
+                  </div>
+                
+              </div>
+            
+        </div>
+
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/default_avatar.jpg" alt="Edmund" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">Edmund</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description"></p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">10</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">2</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/ycliuxinwei" target="_blank">GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://cn.linkedin.com/pub/xinwei-liu/74/2a9/136" target="_blank">Linkedin</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Logistic回归"><span class="nav-number">1.</span> <span class="nav-text">Logistic回归</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#梯度上升法"><span class="nav-number">2.</span> <span class="nav-text">梯度上升法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最优指标"><span class="nav-number">3.</span> <span class="nav-text">最优指标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#梯度上升法简单应用"><span class="nav-number">4.</span> <span class="nav-text">梯度上升法简单应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#算法改进：随机梯度上升"><span class="nav-number">5.</span> <span class="nav-text">算法改进：随机梯度上升</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#疝气病症预测病马的死亡率"><span class="nav-number">6.</span> <span class="nav-text">疝气病症预测病马的死亡率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献"><span class="nav-number">7.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+    </main>
+
+    <footer id="footer" class="footer">
+        <div class="footer-inner">
+            <div class="copyright" >
+  
+  &copy; &nbsp;  2014 - 
+  <span itemprop="copyrightYear">2015</span>
+  <span class="with-love">
+    <i class="icon-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Edmund</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+
+        </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+</div>
+
+<script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"edmund"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+    
+  
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.4"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.4"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.4" id="motion.global"></script>
+
+
+
+  <script type="text/javascript" src="/js/search-toggle.js"></script>
+
+
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.4" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+          var self = this;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      $(indicator).velocity('stop').velocity({
+        opacity: action === 'show' ? 0.4 : 0
+      }, { duration: 100 });
+    }
+
+  });
+</script>
+
+
+  <script type="text/javascript" id="sidebar.nav">
+    $(document).ready(function () {
+      var html = $('html');
+
+      $('.sidebar-nav li').on('click', function () {
+        var item = $(this);
+        var activeTabClassName = 'sidebar-nav-active';
+        var activePanelClassName = 'sidebar-panel-active';
+        if (item.hasClass(activeTabClassName)) {
+          return;
+        }
+
+        var currentTarget = $('.' + activePanelClassName);
+        var target = $('.' + item.data('target'));
+
+        currentTarget.velocity('transition.slideUpOut', 200, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', 200)
+            .addClass(activePanelClassName);
+        });
+
+        item.siblings().removeClass(activeTabClassName);
+        item.addClass(activeTabClassName);
+      });
+
+      $('.post-toc a').on('click', function (e) {
+        e.preventDefault();
+        var offset = $(escapeSelector(this.getAttribute('href'))).offset().top;
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        });
+      });
+
+      // Expand sidebar on post detail page by default, when post has a toc.
+      var $tocContent = $('.post-toc-content');
+      if (isDesktop() && CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    });
+  </script>
+
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        if (CONFIG.sidebar === 'always') {
+            displaySidebar();
+        }
+    });
+</script>
+
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+
+
+
+
+
+<!-- lazyload -->
+<script type="text/javascript" src="/js/lazyload.js"></script>
+<script type="text/javascript">
+    jQuery(function () {
+        jQuery("#posts img").lazyload({
+            placeholder: "/images/loading.gif",
+            effect: "fadeIn"
+        });
+    });
+</script>
+</body>
+</html>

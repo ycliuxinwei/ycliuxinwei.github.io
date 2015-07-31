@@ -1,0 +1,646 @@
+<!doctype html>
+<html class="theme-next use-motion theme-next-mist">
+<head>
+    
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.4"/>
+
+
+
+
+
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.4" />
+
+
+<meta name="description" content="关于在Github上搭建Hexo博客网上已经有很多教程了，我就不再赘述，大家可以参考这几篇文章：
+http://hexo.io/docs/
+http://www.tuicool.com/articles/y6JJV3Z
+http://www.tuicool.com/articles/AfQnQjy
+本篇博客只重点讲下我搭建过程中遇到的一些问题。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Github上搭建Hexo博客">
+<meta property="og:url" content="http://edmund.xyz/2014/12/29/setup-hexo/index.html">
+<meta property="og:site_name" content="Edmund">
+<meta property="og:description" content="关于在Github上搭建Hexo博客网上已经有很多教程了，我就不再赘述，大家可以参考这几篇文章：
+http://hexo.io/docs/
+http://www.tuicool.com/articles/y6JJV3Z
+http://www.tuicool.com/articles/AfQnQjy
+本篇博客只重点讲下我搭建过程中遇到的一些问题。">
+<meta property="og:updated_time" content="2015-07-13T02:14:37.480Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Github上搭建Hexo博客">
+<meta name="twitter:description" content="关于在Github上搭建Hexo博客网上已经有很多教程了，我就不再赘述，大家可以参考这几篇文章：
+http://hexo.io/docs/
+http://www.tuicool.com/articles/y6JJV3Z
+http://www.tuicool.com/articles/AfQnQjy
+本篇博客只重点讲下我搭建过程中遇到的一些问题。">
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'hide'
+  };
+</script>
+
+    <title> Github上搭建Hexo博客 // Edmund </title>
+</head>
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+<!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-58837095-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+<div class="container one-column page-post-detail">
+    <div class="headband"></div>
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand" rel="start">
+      <span class="logo">
+        <i class="icon-logo"></i>
+      </span>
+      <span class="site-title">Edmund</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon icon-home"></i> <br />
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            <i class="menu-item-icon icon-categories"></i> <br />
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            <i class="menu-item-icon icon-tags"></i> <br />
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            <i class="menu-item-icon icon-archives"></i> <br />
+            归档
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+        </div>
+    </header>
+
+    <main id="main" class="main">
+        <div class="main-inner">
+            <div id="content" class="content">
+                
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              Github上搭建Hexo博客
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2014-12-29T15:20:14+08:00" content="2014-12-29">
+            2014-12-29
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a href="/categories/分享/" itemprop="url" rel="index"><span itemprop="name">分享</span></a></span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2014/12/29/setup-hexo/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2014/12/29/setup-hexo/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>关于<code>在Github上搭建Hexo博客</code>网上已经有很多教程了，我就不再赘述，大家可以参考这几篇文章：</p>
+<p><a href="http://hexo.io/docs/" target="_blank" rel="external">http://hexo.io/docs/</a></p>
+<p><a href="http://www.tuicool.com/articles/y6JJV3Z" target="_blank" rel="external">http://www.tuicool.com/articles/y6JJV3Z</a></p>
+<p><a href="http://www.tuicool.com/articles/AfQnQjy" target="_blank" rel="external">http://www.tuicool.com/articles/AfQnQjy</a></p>
+<p>本篇博客只重点讲下我搭建过程中遇到的一些问题。</p>
+<a id="more"></a>
+<h2 id="上传本地git项目至github">上传本地git项目至github</h2><p>在我部署网页，也就是输入<code>hexo deploy</code>命令后，出现了一些问题。</p>
+<h3 id="_config-yml中部署相关的配置">_config.yml中部署相关的配置</h3><p>当时在这里出了一些错误，具体是什么错误类型不太记得了，只记得第二行用<code>type: github</code>会报错，正确的格式见下面的代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">deploy:&#10;  type: git&#10;  repo: git@github.com:yc***/yc***.github.io.git&#10;  branch: master</span><br></pre></td></tr></table></figure></p>
+<h3 id="添加SSH-Key">添加SSH-Key</h3><p>我在之前没有接触过git，只是注册过github账号。Hexo准备上传的github的时候出了一些问题，一直显示我没有权限上传。后来我想到是没有设置SSH-key，毕竟登陆github是需要用户名和密码的，用git上传也需要相应的权限机制。本来想写点的，发现刚才那篇博客里面有：</p>
+<p><a href="http://www.tuicool.com/articles/AfQnQjy" target="_blank" rel="external">http://www.tuicool.com/articles/AfQnQjy</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git config --global user.email &#34;***@gmail.com&#34;&#10;$ git config --global user.name &#34;***&#34;&#10;$ ssh-keygen -t rsa -C &#34;***@gmail.com&#34;&#10;Generating public/private rsa key pair.&#10;Enter file in which to save the key (/c/Users/**/.ssh/id_rsa):&#10;&#10;Created directory &#39;/c/Users/**/.ssh&#39;.&#10;Enter passphrase (empty for no passphrase):&#10;&#10;Enter same passphrase again:&#10;&#10;Your identification has been saved in /c/Users/**/.ssh/id_rsa.&#10;Your public key has been saved in /c/Users/**/.ssh/id_rsa.pub.&#10;The key fingerprint is:&#10;**:**:**:**:**:**:**:**:**:**:**:**:**:**:**:** ***@gmail.com&#10;The key&#39;s randomart image is:&#10;+--[ RSA 2048]----+&#10;|Eo**   .         |&#10;|  ***  ***       |&#10;| .   **********  |&#10;|.      ******    |&#10;| .****  ***      |&#10;|      ****** .   |&#10;|   ******        |&#10;|  .   **         |&#10;|     ***   ..    |&#10;+-----------------+&#10;&#10;$ ssh -T git@github.com&#10;&#10;The authenticity of host &#39;github.com (192.30.252.129)&#39; can&#39;t be established.&#10;RSA key fingerprint is **:**:**:**:**:**:**:**:**:**:**:**:**:**:**:**.&#10;Are you sure you want to continue connecting (yes/no)? yes&#10;&#10;Warning: Permanently added &#39;github.com,192.30.252.129&#39; (RSA) to the list of known hosts.&#10;Enter passphrase for key &#39;/c/Users/Gourmet/.ssh/id_rsa&#39;:&#10;&#10;Hi ***/***.github.io! You&#39;ve successfully authenticated, but Git&#10;Hub does not provide shell access.</span><br></pre></td></tr></table></figure>
+<h2 id="多说帐号设置">多说帐号设置</h2><p>shortname不是登陆账号名，是后来设置的昵称<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">duoshuo_shortname: edmund</span><br></pre></td></tr></table></figure></p>
+<h2 id="hexo常用命令">hexo常用命令</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo n &#34;postName&#34; = hexo new &#34;postName&#34; #&#26032;&#24314;&#25991;&#31456;&#10;hexo n page &#34;pageName&#34; = hexo new page &#34;pageName&#34; #&#26032;&#24314;&#39029;&#38754;&#10;page g = hexo generate #&#29983;&#25104;&#38745;&#24577;&#39029;&#38754;&#33267;public&#30446;&#24405;&#10;page s = hexo server #&#24320;&#21551;&#39044;&#35272;&#35775;&#38382;&#31471;&#21475;&#65288;&#40664;&#35748;&#31471;&#21475;4000&#65292;&#39;ctrl + c&#39;&#20851;&#38381;server&#65289;&#10;page d = hexo deploy #&#23558;.deploy&#30446;&#24405;&#37096;&#32626;&#21040;GitHub</span><br></pre></td></tr></table></figure>
+<h2 id="如何插入图片">如何插入图片</h2><p>把图片放到images文件夹中，然后用markdown语言就可以了。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">![name](/images/***.jpg)</span><br></pre></td></tr></table></figure></p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/01/08/markdown-grammar/" rel="prev">markdown语法</a>
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+            </div>
+
+            
+
+            
+              <div class="comments" id="comments">
+                
+                  <div class="ds-thread" data-thread-key="2014/12/29/setup-hexo/"
+                       data-title="Github上搭建Hexo博客" data-url="http://edmund.xyz/2014/12/29/setup-hexo/">
+                  </div>
+                
+              </div>
+            
+        </div>
+
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/default_avatar.jpg" alt="Edmund" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">Edmund</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description"></p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">10</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">2</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/ycliuxinwei" target="_blank">GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://cn.linkedin.com/pub/xinwei-liu/74/2a9/136" target="_blank">Linkedin</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#上传本地git项目至github"><span class="nav-number">1.</span> <span class="nav-text">上传本地git项目至github</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#_config-yml中部署相关的配置"><span class="nav-number">1.1.</span> <span class="nav-text">_config.yml中部署相关的配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#添加SSH-Key"><span class="nav-number">1.2.</span> <span class="nav-text">添加SSH-Key</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多说帐号设置"><span class="nav-number">2.</span> <span class="nav-text">多说帐号设置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hexo常用命令"><span class="nav-number">3.</span> <span class="nav-text">hexo常用命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何插入图片"><span class="nav-number">4.</span> <span class="nav-text">如何插入图片</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+    </main>
+
+    <footer id="footer" class="footer">
+        <div class="footer-inner">
+            <div class="copyright" >
+  
+  &copy; &nbsp;  2014 - 
+  <span itemprop="copyrightYear">2015</span>
+  <span class="with-love">
+    <i class="icon-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Edmund</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+
+        </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+</div>
+
+<script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"edmund"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+    
+  
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.4"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.4"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.4" id="motion.global"></script>
+
+
+
+  <script type="text/javascript" src="/js/search-toggle.js"></script>
+
+
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.4" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+          var self = this;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      $(indicator).velocity('stop').velocity({
+        opacity: action === 'show' ? 0.4 : 0
+      }, { duration: 100 });
+    }
+
+  });
+</script>
+
+
+  <script type="text/javascript" id="sidebar.nav">
+    $(document).ready(function () {
+      var html = $('html');
+
+      $('.sidebar-nav li').on('click', function () {
+        var item = $(this);
+        var activeTabClassName = 'sidebar-nav-active';
+        var activePanelClassName = 'sidebar-panel-active';
+        if (item.hasClass(activeTabClassName)) {
+          return;
+        }
+
+        var currentTarget = $('.' + activePanelClassName);
+        var target = $('.' + item.data('target'));
+
+        currentTarget.velocity('transition.slideUpOut', 200, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', 200)
+            .addClass(activePanelClassName);
+        });
+
+        item.siblings().removeClass(activeTabClassName);
+        item.addClass(activeTabClassName);
+      });
+
+      $('.post-toc a').on('click', function (e) {
+        e.preventDefault();
+        var offset = $(escapeSelector(this.getAttribute('href'))).offset().top;
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        });
+      });
+
+      // Expand sidebar on post detail page by default, when post has a toc.
+      var $tocContent = $('.post-toc-content');
+      if (isDesktop() && CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    });
+  </script>
+
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        if (CONFIG.sidebar === 'always') {
+            displaySidebar();
+        }
+    });
+</script>
+
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+
+
+
+
+
+<!-- lazyload -->
+<script type="text/javascript" src="/js/lazyload.js"></script>
+<script type="text/javascript">
+    jQuery(function () {
+        jQuery("#posts img").lazyload({
+            placeholder: "/images/loading.gif",
+            effect: "fadeIn"
+        });
+    });
+</script>
+</body>
+</html>

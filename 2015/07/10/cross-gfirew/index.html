@@ -1,0 +1,722 @@
+<!doctype html>
+<html class="theme-next use-motion theme-next-mist">
+<head>
+    
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.4"/>
+
+
+
+
+  <meta name="keywords" content="VPN,proxy,翻墙," />
+
+
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.4" />
+
+
+<meta name="description" content="之前被Campus TM俱乐部邀请写了一篇关于翻墙的科普类文章，里面大概介绍了关于翻墙的一些理论，以及一些翻墙的工具。我就顺便把它挂在这里吧，希望对看到的人有帮助。里面肯定有很多错误，大家看到一定要及时指出。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何访问Gmail和Google群">
+<meta property="og:url" content="http://edmund.xyz/2015/07/10/cross-gfirew/index.html">
+<meta property="og:site_name" content="Edmund">
+<meta property="og:description" content="之前被Campus TM俱乐部邀请写了一篇关于翻墙的科普类文章，里面大概介绍了关于翻墙的一些理论，以及一些翻墙的工具。我就顺便把它挂在这里吧，希望对看到的人有帮助。里面肯定有很多错误，大家看到一定要及时指出。">
+<meta property="og:image" content="http://edmund.xyz/\images\cross_gfirew\cross_gfirew1.jpg">
+<meta property="og:image" content="http://edmund.xyz/\images\cross_gfirew\cross_gfirew2.jpg">
+<meta property="og:image" content="http://edmund.xyz/\images\cross_gfirew\cross_gfirew3.jpg">
+<meta property="og:image" content="http://edmund.xyz/\images\cross_gfirew\cross_gfirew4.png">
+<meta property="og:image" content="http://edmund.xyz/\images\cross_gfirew\cross_gfirew5.jpg">
+<meta property="og:image" content="http://edmund.xyz/\images\cross_gfirew\vpn1.png">
+<meta property="og:image" content="http://edmund.xyz/\images\cross_gfirew\vpn2.png">
+<meta property="og:image" content="http://edmund.xyz/\images\cross_gfirew\vpn3.png">
+<meta property="og:image" content="http://edmund.xyz/\images\cross_gfirew\vpn4.png">
+<meta property="og:image" content="http://edmund.xyz/\images\cross_gfirew\proxy1.png">
+<meta property="og:image" content="http://edmund.xyz/\images\cross_gfirew\proxy2.jpg">
+<meta property="og:image" content="http://edmund.xyz/\images\cross_gfirew\proxy3.png">
+<meta property="og:image" content="http://edmund.xyz/\images\cross_gfirew\proxy4.png">
+<meta property="og:image" content="http://edmund.xyz/\images\cross_gfirew\proxy5.png">
+<meta property="og:image" content="http://edmund.xyz/\images\cross_gfirew\proxy6.jpg">
+<meta property="og:updated_time" content="2015-07-17T04:02:34.824Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="如何访问Gmail和Google群">
+<meta name="twitter:description" content="之前被Campus TM俱乐部邀请写了一篇关于翻墙的科普类文章，里面大概介绍了关于翻墙的一些理论，以及一些翻墙的工具。我就顺便把它挂在这里吧，希望对看到的人有帮助。里面肯定有很多错误，大家看到一定要及时指出。">
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'hide'
+  };
+</script>
+
+    <title> 如何访问Gmail和Google群 // Edmund </title>
+</head>
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+<!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-58837095-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+<div class="container one-column page-post-detail">
+    <div class="headband"></div>
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand" rel="start">
+      <span class="logo">
+        <i class="icon-logo"></i>
+      </span>
+      <span class="site-title">Edmund</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon icon-home"></i> <br />
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            <i class="menu-item-icon icon-categories"></i> <br />
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            <i class="menu-item-icon icon-tags"></i> <br />
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            <i class="menu-item-icon icon-archives"></i> <br />
+            归档
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+        </div>
+    </header>
+
+    <main id="main" class="main">
+        <div class="main-inner">
+            <div id="content" class="content">
+                
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              如何访问Gmail和Google群
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2015-07-10T11:10:31+08:00" content="2015-07-10">
+            2015-07-10
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a href="/categories/分享/" itemprop="url" rel="index"><span itemprop="name">分享</span></a></span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2015/07/10/cross-gfirew/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2015/07/10/cross-gfirew/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>之前被Campus TM俱乐部邀请写了一篇关于翻墙的科普类文章，里面大概介绍了关于翻墙的一些理论，以及一些翻墙的工具。我就顺便把它挂在这里吧，希望对看到的人有帮助。里面肯定有很多错误，大家看到一定要及时指出。<br><a id="more"></a></p>
+<hr>
+<hr>
+<h1 id="正文">正文</h1><p>加入CTMC快两年了，这里让我体会最深的地方就是对Gmail和Google群的使用。我记得刚加入俱乐部的时候，VPM要求我使用Gmail邮箱，并且要加入Google群。一开始我很疑惑，为什么要用Gmail？Google群是什么玩意儿？干嘛不用QQ呢？用过一段时间Gmail和Google群之后，我的疑惑渐渐打消了。</p>
+<p>原来，Gmail和Google群是CTMC流程化的工具。将Gmail和Google群绑定，所有的会员每周都会接收到Gmail邮件，里面包括会议的Agenda和Meeting Minutes，这样我们可以有效地查阅会议的流程、确认会议角色、以及检查其中出现的错误。由此产生的文档，Google群可以永久保存。此外，Gmail和Google群极大地方便了CTMC会员之间的交流（尤其是和海外会员之间的交流）。我翻看了Google群里的记录，里面有很多精彩的分享和讨论，一些海外会员Charles、Andy等等也很积极的参与讨论。不得不说，Gmail和Google群使CTMC变得非常专业、非常国际化。</p>
+<p>Gmail和Google群是非常好的工具，可惜在我使用了一年之后被封锁了，不能正常访问了。这样的工具国内没有比较好的替代，因此必须想办法访问Gmail和Google群。</p>
+<p>当时我们使用了各种FQ软件，各种VPN，有的人还想到修改hosts文件的方法。但是这些软件、这些VPN、这些hosts文件或多或少存在一些问题，经常会失效。大家也许还记得，我之前有教过几个人使用GoAgent，它的速度非常快，但是后来这种方法变得不太稳定、经常掉线。我之后也推荐过几个付费和免费的VPN，不过也很快不能用了。我比较爱折腾，发生了那样的事情之后，我就在网上了解到很多可以访问Gmail和Google群的方法，包括一些相关的资料。这里我把一些相关的原理和可行的办法分享给各位CTMC会员。</p>
+<hr>
+<h2 id="知己知彼">知己知彼</h2><p>为什么不能访问Google、YouTube这样的网站呢？这个问题的直观原因是有人不想让我们访问。对于为什么不让我们访问，我不是很感兴趣。我感兴趣的是他们（为了后面称呼方便，他们我就叫“大怪兽们”）用了什么技术，所以这个问题我更多从技术层面思考。这里列出了我了解到的一些原因。</p>
+<h3 id="关键字阻断">关键字阻断</h3><p>大概在2010年左右，Google的大部分网站都是用的http协议，我记得当时有个非常有趣的现象，只要搜索“**涛”网页就突然断掉，要持续好几分钟才能恢复。这是什么原因呢？要从http协议说起。</p>
+<p>我们上网的时候，网页地址前面有“http://” 这样的字样，这就是表面你访问的网页是采用的http协议。这个协议有个缺点是不安全：访问http的网页时，产生的数据是没有加密的明文数据（提醒大家以后访问http:// 打头的网站留点心）。这些数据别人是可以通过嗅探软件捕获得到的，当然大怪兽们也是可以捕获得到的。大怪兽们发现我们搜索那些不该搜的字眼时，他们会想办法伪装并发送RST包(reset)干扰正常的TCP连接，这就是我们无法继续访问网页的原因。当然大怪兽不会一直干扰下去，过了几分钟又可以继续访问了，只是不能触发那些不该触发的字眼。</p>
+<p>后来Google采用了https协议，简单来说就是加密的http协议，我之前遇到的现象就没有了。但是你以为你就可以随便访问Google了？然并卵。大怪兽们是不会让你们得逞的！有一个办法就是阻断SSL连接。</p>
+<h3 id="阻断SSL连接">阻断SSL连接</h3><p>刚才说了，Google用了https协议了，其实就是http下加入SSL层。SSL（包括其继任者TLS）是一种加密协议，浏览网页的数据都是被加密的。这些数据很难被破解，大怪兽们当然也无法知道你发送的数据里面是否有不该出现的字眼。但是，你的握手过程是公开的，也就是说大怪兽们知道你在向谁发送数据。大怪兽发现你在和Google交互数据，而且是用的SSL协议（443端口），那么好了，给你发送个RST包(reset)，让你通讯断掉几分钟好了。不过现在已经不用这个方法了，而是直接封锁IP，后面会讲到。</p>
+<p><img src="\images\cross_gfirew\cross_gfirew1.jpg" alt="CrossGfirew1"></p>
+<p><img src="\images\cross_gfirew\cross_gfirew2.jpg" alt="CrossGfirew2"></p>
+<h3 id="劫持和污染DNS">劫持和污染DNS</h3><p>我们在访问网页的时候，比如“google.com”的时候，并不是通过该字符串（域名）直接访问的，而是通过DNS，将“google.com”这个字符串映射为其服务器的IP地址216.58.221.110，只有IP地址才能被机器直接读取。最后我们访问216.58.221.110并取得数据。</p>
+<p>将世界上所有“域名”到“IP地址”的映射放在一起构成一个数据库，该数据库是存在DNS服务器上的。这些映射需要各个网站将服务器的IP地址提交给域名服务商，让后让他们加入到DNS服务器的数据库中。我们访问网站的时候，先经过DNS服务器，然后让DNS服务器将域名转为IP地址，得到了IP地址我们便可以访问了。大怪兽们为了不让我们上网，便在DNS上动了手脚。</p>
+<p>域名发送到DNS服务器并返回来，是由UDP协议来处理的，但是这个协议并不可靠。大怪兽们利用这一点，在DNS服务器返回IP地址之前，将一个伪造的查询结果返回给我们，告诉我们DNS解析失败，这样我们就不能上网了。这也就是所谓的DNS劫持。</p>
+<p>还有一个办法，就是篡改DNS服务器中的数据。就是将这个映射关系破坏掉，或者改变这个映射的关系，让我们得不到正确的结果。例如，我们在访问google.com时，DNS服务器本来是应该将映射的结果“216.58.221.110”返回给我们的，但是篡改后的返回的数据是“119.75.217.109”（这只是假设一个例子，实际不是这样的）。大怪兽这样的行为，被称作为DNS污染，其实就是让你看到不想看到的东西。全球13个根DNS服务器都在国外，大怪兽们篡改不了，他们能改变的只是DNS缓存服务器和镜像DNS服务器。但对他们来说，这样的污染对付我们已经足够了。</p>
+<p><img src="\images\cross_gfirew\cross_gfirew3.jpg" alt="CrossGfirew3"></p>
+<h3 id="IP封锁">IP封锁</h3><p>这种方法是大怪兽们的必杀技，相当原始、但是也相当有效。基本就是将一些不想让我们访问网站的IP地址屏蔽掉，这也是普通路由器中的常用功能：添加IP黑名单。</p>
+<hr>
+<h2 id="突破重围">突破重围</h2><p>针对大怪兽们的那些方法，我们也有相应的策略。<br>对于封锁和阻断，通常的办法就是重新找一条未被影响的通讯链路。全球共有40多亿的IP地址，大怪兽们当然可以把它们都封掉，但是大家不会让他们这么做的。就说说著名的编程社交网站Github吧。2013年1月的时候被封锁过，结果招到了包括李开复为首的大批IT人士的坚决抗议，很快Github又恢复了正常。大怪兽随便封锁一个IP地址，都有可能影响到大家的正常生活和工作、引起民愤，更不用说像Github这样的“生活必需品”了。</p>
+<p><img src="\images\cross_gfirew\cross_gfirew4.png" alt="CrossGfirew4"></p>
+<p>正是由于大量的IP未被封锁和阻断，我们就可以通过那些未被封锁的服务器（计算机），将数据通讯绕道而行，达到访问的目的。本来我们要访问A服务器，但是被阻拦了，但是B和A之间是通的，我们和B之间也没有遭到大怪兽的阻拦，那么我们通过B就能访问A了。但是如果只是简简单单的绕道还是不够的，如果完全通过明文通讯，大怪兽通过审查，发现我们和B之间的通讯经常出现关于A的相关内容，那么B很快就会被封锁。现在很多FQ的方法，都是基于数据通讯绕道而行的原理，区别也就在加密协议了。</p>
+<hr>
+<h3 id="VPN">VPN</h3><p>VPN全名虚拟专用网络，是一个比较成熟的技术。简单来说，它在公用网络上建立虚拟的专用网络，进行加密通讯。VPN通过封装化的方式加密，而且作用在数据链路层和网络层上，因此对于用户来说，VPN相连的两端基本上可以看成一个局域网中的电脑。于是你就可以大摇大摆的访问Gmail和Google群了，而且大怪兽们根本不知道你干了什么，只知道你和VPN服务器之间有通讯。你用了VPN，大怪兽们应该也是知道的，就看他们想不想管了。联通好像不可以用PPTP协议的VPN，大怪兽们也经常封锁付费的VPN服务器。大怪兽们动作不是太大，可能是因为中国有太多外企，VPN也是他们和总部之间的联系方式。</p>
+<h3 id="其他加密协议的代理">其他加密协议的代理</h3><p>其他的一些加密方法，例如GoAgent、SSH、Shadowsocks等都是基于https、Socks4/5等加密算法的，我就不详细介绍了，后面有相关软件的介绍。</p>
+<h3 id="修改hosts文件">修改hosts文件</h3><p>hosts文件的目的在文件内容的第一行已经写得很清楚了，建立主机名（域名）和IP地址的映射。通过手动写一些域名到IP地址的映射关系，我们可以避免将这些网站的主机名通过DNS服务器来解析。就如同你开车，已经知道路该怎么走了，根本不需要开导航仪，从而被导航仪忽悠。不用域名解析，就不存在被污染和被劫持。这个方法只使用于没有被封锁，但DNS解析出现问题的网站。</p>
+<hr>
+<h2 id="一点人生经验">一点人生经验</h2><blockquote>
+<p>你们啊，有时候Too Young, Too Simple！Sometimes Naïve！我觉得你们还需要学习一下，我来告诉你们一些人生经验！”</p>
+</blockquote>
+<p><img src="\images\cross_gfirew\cross_gfirew5.jpg" alt="CrossGfirew5"></p>
+<p>刚刚讲了好多基本原理，接下来我会给大家带来一些干货，这些基本都是被我验证过的方法。不过在给出之前，我有必要和大家强调一些事：</p>
+<ol>
+<li>本文目的是学习分享，文中所介绍的方法，仅限个人学习使用，不得随处散布。</li>
+<li>非本人同意，本文拒绝转发、转载，只许查看。</li>
+<li>以下方法很容易失效，请大家默默使用，不透露给不熟的人。</li>
+<li>请不要用本文中提到的工具做任何违反法律的事情，否则后果自负，责任和本人无关。</li>
+</ol>
+<hr>
+<h2 id="干货来了哈哈！">干货来了哈哈！</h2><h3 id="VPN-1">VPN</h3><h4 id="1小时VPN帐号">1小时VPN帐号</h4><p><a href="http://freevpn.wwdhz.com/" target="_blank" rel="external">http://freevpn.wwdhz.com/</a><br>网友共享的免费VPN账号。</p>
+<p>优点：免费、快捷<br>缺点：网络不稳定、不确定性大、1小时自动断开</p>
+<p>附：Windows 7系统下VPN（PPTP、L2TP）的配置<br><a href="https://github.com/ycliuxinwei/win7_pptp-l2tp/blob/master/readme.md" target="_blank" rel="external">https://github.com/ycliuxinwei/win7_pptp-l2tp/blob/master/readme.md</a></p>
+<h4 id="VPN_Gate">VPN Gate</h4><p><a href="http://www.vpngate.net/" target="_blank" rel="external">http://www.vpngate.net/</a> （镜像站点：<a href="http://61.79.191.139:6325/cn/" target="_blank" rel="external">http://61.79.191.139:6325/cn/</a> ）<br>VPN Gate是由日本国立筑波大学研究生院运营的分布式免费VPN，全球大概有11345个公共 VPN 中继服务器。</p>
+<p>优点：免费、VPN服务器数量庞大<br>缺点：有些服务器需要OpenVPN支持、主页经常被block</p>
+<h4 id="Green_VPN（收费）">Green VPN（收费）</h4><p><a href="https://www.igreenjsq.co/" target="_blank" rel="external">https://www.igreenjsq.co/</a><br><img src="\images\cross_gfirew\vpn1.png" alt="vpn1"><br>Green VPN是网上评价比较高的VPN服务商，存在了好几年。由于线路多，所以不容易被block，而且它价格还算比较便宜。</p>
+<p>优缺点：我没有用过，希望用过的人和我交流下。</p>
+<h4 id="豆荚VPN（收费）">豆荚VPN（收费）</h4><p><a href="http://www.djjsq.cn/" target="_blank" rel="external">http://www.djjsq.cn/</a><br><img src="\images\cross_gfirew\vpn2.png" alt="vpn2"><br>豆荚用的人比较多，人们经常拿来和Green VPN比较。</p>
+<p>优缺点：应该和Green VPN差不多。</p>
+<h4 id="Your_Freedom（收费）">Your Freedom（收费）</h4><p><a href="http://www.your-freedom.net/" target="_blank" rel="external">http://www.your-freedom.net/</a><br><img src="\images\cross_gfirew\vpn3.png" alt="vpn3"><br>Your Freedom早在2006年就有了，它是由德国的一家网络公司提供的VPN服务（貌似不限于VPN技术），既有免费服务也有收费服务。在GoAgent出来之前，我一直用的它，速度不快，但是很稳定。收费服务没有用过，要用欧元支付，不方便。Your Freedom有一个缺陷是，第一次使用时，需要先借助别的工具。</p>
+<p>优点：稳定<br>缺点：免费服务速度慢、欧元支付、第一次使用困难</p>
+<h4 id="Wormhole_VPN（收费）">Wormhole VPN（收费）</h4><p><a href="https://wormholevpn.com" target="_blank" rel="external">https://wormholevpn.com</a><br><img src="\images\cross_gfirew\vpn4.png" alt="vpn4"><br>Wormhole VPN是我最近在用的VPN服务，速度很快、而且价格非常低廉（3刀/年，可能是在推广期）。但是我从域名服务商查到wormholevpn.com是今年5月才申请的，所以它长期存在下去的不确定性还很大，有待观察。</p>
+<p>优点：廉价、速度快<br>缺点：不确定性大</p>
+<h4 id="VPS服务器">VPS服务器</h4><p>除了购买VPN服务，还有一个办法就使用VPS服务器来搭建VPN。不得不说，这么做有很多优势：首先，VPS服务器使用比较自由，不仅可以用来搭建VPN，还可以建网站、开博客，甚至可以玩游戏挂机、刷账号在线时长……其次，现在国外的租用VPS的价格并不贵，用来购买VPN服务的钱和开VPS差不多。此外，自己建的VPN并没客户端数量限制，因此可以把它分享给想分享的人（学妹、学姐什么的）。不过缺点也很明显：门槛高、需要学习linux使用。（淘宝搜bandwagon）</p>
+<p>国外比较好的VPS很多：Vultr、Linode、Interserver、VPS.NET、搬瓦工等。最低配的价格也就2-6刀/月，如果开一个网站，同时用来搭建VPN是很合算的。此外，微软的Windows Azure、亚马逊的AWS云服务器（作为VPS的升级版）为了推广，第一年都是免费使用的，同时想玩玩云计算的可以考虑下。</p>
+<h3 id="IPv6">IPv6</h3><p>IPv6是继IPv4之后的下一代互联网协议版本。IPv6的网络层是强制使用IPsec加密协议的，而IPv4往往并没有配置或者仅仅作为可选项，因此大怪兽们对IPv6网络的干扰相对IPv4有难度。不是很清楚他们对IPv6控制得怎么样，但是可以确定的是，IPv6网络用的人比较少，因此审查力度相对较小。通过IPv6和其他FQ方法相组合，一般都有较快的访问速度。这里我就介绍两种方法。</p>
+<h4 id="GoAgent+IPv6">GoAgent+IPv6</h4><p>Google App Engine提供ipv6服务器，因此通过的设置，可以通过ipv6通道达到访问Gmail的目的。只要改变proxy.ini中ipv6的键值为1。GoAgent介绍见后文。</p>
+<p>优点：速度快、省流量<br>缺点：需要ipv6</p>
+<h4 id="ipv6+host">ipv6+host</h4><p><a href="https://github.com/ipv6-hosts/ipv6-hosts" target="_blank" rel="external">https://github.com/ipv6-hosts/ipv6-hosts</a></p>
+<p>由于DNS服务器数据被污染，往往访问某些网站时无法正确的域名解析。那么通过修改host文件，将一些常用的网址域名与其对应的IP地址建立一个关联“数据库”，这样可以避免使用被污染的DNS服务器。一般情况下是添加ipv4地址，但是由于ipv4被封杀得厉害，所以在有ipv6的条件下，推荐添加相关ipv6的地址。</p>
+<h3 id="其他代理">其他代理</h3><h4 id="GoAgent">GoAgent</h4><p><a href="https://github.com/goagent/goagent" target="_blank" rel="external">https://github.com/goagent/goagent</a><br><img src="\images\cross_gfirew\proxy1.png" alt="proxy1"><br>GoAgent并没有用到VPN，它是一个基于https加密和Google App Engine的代理工具。Google App Engine本来是Google为Google App开发者提供的服务，用来构建Google App的服务器端。GoAgent则利用Google App Engine服务器作为中转站，通过https和谷歌服务器取得通信，然后获取到服务器的信息。https由于加密了，访问境外服务器不会被block。</p>
+<p>优点：免费、最多每天10GB流量<br>缺点：配置麻烦、网络不稳定、只适用于浏览器、界面不友好</p>
+<h4 id="Psiphon_3">Psiphon 3</h4><p><a href="https://s3.amazonaws.com/5nkt-sj7x-cc2h/zh.html" target="_blank" rel="external">https://s3.amazonaws.com/5nkt-sj7x-cc2h/zh.html</a><br><img src="\images\cross_gfirew\proxy2.jpg" alt="proxy2"><br>赛风是加拿大研究人员用来对付加拿大政府block的代理软件，支持SSH、HTTP等多种方式的代理。赛风+tor可以搭建暗网。</p>
+<p>优点：免费、配置方便、提供多平台<br>缺点：只适用于浏览器</p>
+<h4 id="红杏（收费）、红杏公益">红杏（收费）、红杏公益</h4><p><a href="http://honx.in/i/U0Ek74Ko1zG8ixx0" target="_blank" rel="external">http://honx.in/i/U0Ek74Ko1zG8ixx0</a><br><img src="\images\cross_gfirew\proxy3.png" alt="proxy3"><br>是一款网络代理工具，原理和GoAgent类似。开发人员可以免费使用“红杏公益”： hx.gy:1080，用于更新各种库。</p>
+<p>优点：方便、廉价<br>缺点：只适用于浏览器</p>
+<p>####萤火虫FireFly Proxy<br><a href="https://github.com/yinghuocho/firefly-proxy" target="_blank" rel="external">https://github.com/yinghuocho/firefly-proxy</a></p>
+<p>是一款开源的FQ工具，内置TOR的meek流量混淆技术，可自定goagent等http代理、SSH和Shadowsocks账号。</p>
+<h4 id="SSH">SSH</h4><p><img src="\images\cross_gfirew\proxy4.png" alt="proxy4"><br>浏览器配置和GoAgent类似，需要选择Socks5作为代理协议。（一个提供免费SSH服务和帐号的网站：<a href="https://www.fastssh.com/）" target="_blank" rel="external">https://www.fastssh.com/）</a></p>
+<h4 id="Shadowsocks">Shadowsocks</h4><p><a href="http://shadowsocks.org/" target="_blank" rel="external">http://shadowsocks.org/</a><br><img src="\images\cross_gfirew\proxy5.png" alt="proxy5"><br>FQ界的瑞士军刀。本质也是一种socks5代理服务，类似于SSH代理。上网搜索Shadowsocks，可以找到无数免费账号。</p>
+<h4 id="I2P（大蒜）">I2P（大蒜）</h4><p><a href="https://geti2p.net/" target="_blank" rel="external">https://geti2p.net/</a><br><img src="\images\cross_gfirew\proxy6.jpg" alt="proxy6"><br>最后祭出安全性最强的匿名软件I2P，和大名鼎鼎的“暗网工具”tor一样，有极高的安全性，后者令NSA非常头疼。和tor不同的是，I2P使用分布式Kad 算法，几乎无法被封杀。使用I2P可以访问暗网，绝对匿名、无法被跨省。当然，I2P也可以用来翻墙，不过有点杀鸡用屠龙刀的意思。</p>
+<p>优点：匿名网络、无法被跨省（暗网）<br>缺点：速度奇慢、第一次使用需要补种、需要java支持</p>
+<p><strong>这篇文章只适用于小白，计算机专业人士请轻喷，如果有错误还希望指出来。</strong></p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/VPN/" rel="tag">#VPN</a>
+          
+            <a href="/tags/proxy/" rel="tag">#proxy</a>
+          
+            <a href="/tags/翻墙/" rel="tag">#翻墙</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/04/15/machine-learning-notes7/" rel="next">预测数值型数据——回归</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+            </div>
+
+            
+
+            
+              <div class="comments" id="comments">
+                
+                  <div class="ds-thread" data-thread-key="2015/07/10/cross-gfirew/"
+                       data-title="如何访问Gmail和Google群" data-url="http://edmund.xyz/2015/07/10/cross-gfirew/">
+                  </div>
+                
+              </div>
+            
+        </div>
+
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/default_avatar.jpg" alt="Edmund" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">Edmund</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description"></p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">10</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">2</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/ycliuxinwei" target="_blank">GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://cn.linkedin.com/pub/xinwei-liu/74/2a9/136" target="_blank">Linkedin</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#正文"><span class="nav-number">1.</span> <span class="nav-text">正文</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#知己知彼"><span class="nav-number">1.1.</span> <span class="nav-text">知己知彼</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#关键字阻断"><span class="nav-number">1.1.1.</span> <span class="nav-text">关键字阻断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#阻断SSL连接"><span class="nav-number">1.1.2.</span> <span class="nav-text">阻断SSL连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#劫持和污染DNS"><span class="nav-number">1.1.3.</span> <span class="nav-text">劫持和污染DNS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IP封锁"><span class="nav-number">1.1.4.</span> <span class="nav-text">IP封锁</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#突破重围"><span class="nav-number">1.2.</span> <span class="nav-text">突破重围</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#VPN"><span class="nav-number">1.2.1.</span> <span class="nav-text">VPN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他加密协议的代理"><span class="nav-number">1.2.2.</span> <span class="nav-text">其他加密协议的代理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修改hosts文件"><span class="nav-number">1.2.3.</span> <span class="nav-text">修改hosts文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一点人生经验"><span class="nav-number">1.3.</span> <span class="nav-text">一点人生经验</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#干货来了哈哈！"><span class="nav-number">1.4.</span> <span class="nav-text">干货来了哈哈！</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#VPN-1"><span class="nav-number">1.4.1.</span> <span class="nav-text">VPN</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1小时VPN帐号"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">1小时VPN帐号</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#VPN_Gate"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">VPN Gate</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Green_VPN（收费）"><span class="nav-number">1.4.1.3.</span> <span class="nav-text">Green VPN（收费）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#豆荚VPN（收费）"><span class="nav-number">1.4.1.4.</span> <span class="nav-text">豆荚VPN（收费）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Your_Freedom（收费）"><span class="nav-number">1.4.1.5.</span> <span class="nav-text">Your Freedom（收费）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Wormhole_VPN（收费）"><span class="nav-number">1.4.1.6.</span> <span class="nav-text">Wormhole VPN（收费）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#VPS服务器"><span class="nav-number">1.4.1.7.</span> <span class="nav-text">VPS服务器</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IPv6"><span class="nav-number">1.4.2.</span> <span class="nav-text">IPv6</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#GoAgent+IPv6"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">GoAgent+IPv6</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ipv6+host"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">ipv6+host</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他代理"><span class="nav-number">1.4.3.</span> <span class="nav-text">其他代理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#GoAgent"><span class="nav-number">1.4.3.1.</span> <span class="nav-text">GoAgent</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Psiphon_3"><span class="nav-number">1.4.3.2.</span> <span class="nav-text">Psiphon 3</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#红杏（收费）、红杏公益"><span class="nav-number">1.4.3.3.</span> <span class="nav-text">红杏（收费）、红杏公益</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SSH"><span class="nav-number">1.4.3.4.</span> <span class="nav-text">SSH</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Shadowsocks"><span class="nav-number">1.4.3.5.</span> <span class="nav-text">Shadowsocks</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#I2P（大蒜）"><span class="nav-number">1.4.3.6.</span> <span class="nav-text">I2P（大蒜）</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+    </main>
+
+    <footer id="footer" class="footer">
+        <div class="footer-inner">
+            <div class="copyright" >
+  
+  &copy; &nbsp;  2014 - 
+  <span itemprop="copyrightYear">2015</span>
+  <span class="with-love">
+    <i class="icon-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Edmund</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+
+        </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+</div>
+
+<script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"edmund"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+    
+  
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.4"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.4"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.4" id="motion.global"></script>
+
+
+
+  <script type="text/javascript" src="/js/search-toggle.js"></script>
+
+
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.4" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+          var self = this;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      $(indicator).velocity('stop').velocity({
+        opacity: action === 'show' ? 0.4 : 0
+      }, { duration: 100 });
+    }
+
+  });
+</script>
+
+
+  <script type="text/javascript" id="sidebar.nav">
+    $(document).ready(function () {
+      var html = $('html');
+
+      $('.sidebar-nav li').on('click', function () {
+        var item = $(this);
+        var activeTabClassName = 'sidebar-nav-active';
+        var activePanelClassName = 'sidebar-panel-active';
+        if (item.hasClass(activeTabClassName)) {
+          return;
+        }
+
+        var currentTarget = $('.' + activePanelClassName);
+        var target = $('.' + item.data('target'));
+
+        currentTarget.velocity('transition.slideUpOut', 200, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', 200)
+            .addClass(activePanelClassName);
+        });
+
+        item.siblings().removeClass(activeTabClassName);
+        item.addClass(activeTabClassName);
+      });
+
+      $('.post-toc a').on('click', function (e) {
+        e.preventDefault();
+        var offset = $(escapeSelector(this.getAttribute('href'))).offset().top;
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        });
+      });
+
+      // Expand sidebar on post detail page by default, when post has a toc.
+      var $tocContent = $('.post-toc-content');
+      if (isDesktop() && CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    });
+  </script>
+
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        if (CONFIG.sidebar === 'always') {
+            displaySidebar();
+        }
+    });
+</script>
+
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+
+
+
+
+
+<!-- lazyload -->
+<script type="text/javascript" src="/js/lazyload.js"></script>
+<script type="text/javascript">
+    jQuery(function () {
+        jQuery("#posts img").lazyload({
+            placeholder: "/images/loading.gif",
+            effect: "fadeIn"
+        });
+    });
+</script>
+</body>
+</html>

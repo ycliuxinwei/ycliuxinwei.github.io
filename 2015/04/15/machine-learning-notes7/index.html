@@ -1,0 +1,686 @@
+<!doctype html>
+<html class="theme-next use-motion theme-next-mist">
+<head>
+    
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.4"/>
+
+
+
+
+  <meta name="keywords" content="python,机器学习,算法,线性回归," />
+
+
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.4" />
+
+
+<meta name="description" content="回归其实就是一个函数的估计问题，通过找出因变量和自变量之间的因果关系，进行预测和估计。回归和分类都属于监督学习，但是回归和分类问题不同的地方是，回归的输出是定量的，或者说回归是用来预测连续变量的。而分类的输出是定性的，分类是对离散变量的预测。举个例子：预测明天的气温是多少度，这是一个回归任务；预测明天是阴、晴还是雨，就是一个分类任务。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="预测数值型数据——回归">
+<meta property="og:url" content="http://edmund.xyz/2015/04/15/machine-learning-notes7/index.html">
+<meta property="og:site_name" content="Edmund">
+<meta property="og:description" content="回归其实就是一个函数的估计问题，通过找出因变量和自变量之间的因果关系，进行预测和估计。回归和分类都属于监督学习，但是回归和分类问题不同的地方是，回归的输出是定量的，或者说回归是用来预测连续变量的。而分类的输出是定性的，分类是对离散变量的预测。举个例子：预测明天的气温是多少度，这是一个回归任务；预测明天是阴、晴还是雨，就是一个分类任务。">
+<meta property="og:image" content="http://edmund.xyz/images/MachineLearninginAction/ml_chap8_reg1.png">
+<meta property="og:image" content="http://edmund.xyz/images/MachineLearninginAction/ml_chap8_reg2.png">
+<meta property="og:image" content="http://edmund.xyz/images/MachineLearninginAction/ml_chap8_LWLR1.png">
+<meta property="og:image" content="http://edmund.xyz/images/MachineLearninginAction/ml_chap8_LWLR2.png">
+<meta property="og:image" content="http://edmund.xyz/images/MachineLearninginAction/ml_chap8_LWLR3.png">
+<meta property="og:image" content="http://edmund.xyz/images/MachineLearninginAction/ml_chap8_ridge.png">
+<meta property="og:updated_time" content="2015-07-30T15:28:41.943Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="预测数值型数据——回归">
+<meta name="twitter:description" content="回归其实就是一个函数的估计问题，通过找出因变量和自变量之间的因果关系，进行预测和估计。回归和分类都属于监督学习，但是回归和分类问题不同的地方是，回归的输出是定量的，或者说回归是用来预测连续变量的。而分类的输出是定性的，分类是对离散变量的预测。举个例子：预测明天的气温是多少度，这是一个回归任务；预测明天是阴、晴还是雨，就是一个分类任务。">
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'hide'
+  };
+</script>
+
+    <title> 预测数值型数据——回归 // Edmund </title>
+</head>
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+<!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-58837095-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+<div class="container one-column page-post-detail">
+    <div class="headband"></div>
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand" rel="start">
+      <span class="logo">
+        <i class="icon-logo"></i>
+      </span>
+      <span class="site-title">Edmund</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon icon-home"></i> <br />
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            <i class="menu-item-icon icon-categories"></i> <br />
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            <i class="menu-item-icon icon-tags"></i> <br />
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            <i class="menu-item-icon icon-archives"></i> <br />
+            归档
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+        </div>
+    </header>
+
+    <main id="main" class="main">
+        <div class="main-inner">
+            <div id="content" class="content">
+                
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              预测数值型数据——回归
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2015-04-15T10:21:12+08:00" content="2015-04-15">
+            2015-04-15
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a href="/categories/学习笔记/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a></span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2015/04/15/machine-learning-notes7/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2015/04/15/machine-learning-notes7/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p><code>回归</code>其实就是一个函数的估计问题，通过找出因变量和自变量之间的因果关系，进行预测和估计。回归和分类都属于监督学习，但是回归和分类问题不同的地方是，回归的输出是定量的，或者说回归是用来预测连续变量的。而分类的输出是定性的，分类是对离散变量的预测。举个例子：预测明天的气温是多少度，这是一个回归任务；预测明天是阴、晴还是雨，就是一个分类任务。</p>
+<a id="more"></a>
+<p>比较简单回归的就是线性回归，线性回归中欠拟合现象通常使用<code>局部加权线性回归</code>，如果数据的特征比样本点还多则引入<code>岭回归</code>。</p>
+<hr>
+<h2 id="线性回归">线性回归</h2><p>线性回归的任务就是根据$x_1,x_2,…,x_m$和$y$观察值去估计线性函数$f$，<br>$$f(\mathbf{x})=\mathbf{x}^T\mathbf{w}+b,$$其中，$\mathbf{x}=[x_1, x_2, …, x_m]^T$，$\mathbf{w}=[w_1, w_2, …, w_m]^T$。通常假定f函数的数学形式已知，其中若干个参数$\mathbf{w},b$未知，要通过自变量和因变量的观察值去估计未知的参数值[3]。</p>
+<p>令$x_0=0$，$w_0=b$，这两项都算入$\mathbf{x}$和$\mathbf{w}$，上面的式子可以简化为$y=f(\mathbf{x})=\mathbf{x}^T\mathbf{w}$。</p>
+<p>为了估计出$\mathbf{w}$的最优解，有一种方法是求出平方误差和<br>$$\sum_{i=1}^m\left(y^{(i)}-{\mathbf{x}^{(i)}}^T\mathbf{w}\right)^2=\left(Y-X\mathbf{w}\right)^T\left(Y-X\mathbf{w}\right),$$其中，$Y=[y_1, y_2,…,y_n]^T$,$X=[\mathbf{x}^{(1)},\mathbf{x}^{(2)},…,\mathbf{x}^{(n)}]^T$,$n$为样本总数。求出平方误差和对$\mathbf{w}$的导数，得到$2X^T(Y-X\mathbf{w})$，令其等于零，解出$\mathbf{w}$如下：<br>$$\hat{\mathbf{w}}=\left(X^TX\right)^{-1}X^TY.$$其中，$\hat{\mathbf{w}}$是回归系数的估计值，而这种方法就是所谓的<code>普通最小二乘法</code>（Ordinary least squares）。</p>
+<p><strong>程序</strong><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 导入数据</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">loadDataSet</span><span class="params">(fileName)</span>:</span></span><br><span class="line">    numFeat = len(open(fileName).readline().split(<span class="string">'\t'</span>)) - <span class="number">1</span></span><br><span class="line">    dataMat = []; labelMat = []</span><br><span class="line">    fr = open(fileName)</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> fr.readlines():</span><br><span class="line">        lineArr =[]</span><br><span class="line">        curLine = line.strip().split(<span class="string">'\t'</span>)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(numFeat):</span><br><span class="line">            lineArr.append(float(curLine[i]))</span><br><span class="line">        dataMat.append(lineArr)</span><br><span class="line">        labelMat.append(float(curLine[-<span class="number">1</span>]))</span><br><span class="line">    <span class="keyword">return</span> dataMat,labelMat</span><br><span class="line"></span><br><span class="line"><span class="comment"># 最小二乘法</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">standRegres</span><span class="params">(xArr, yArr)</span>:</span></span><br><span class="line">    xMat = mat(xArr)</span><br><span class="line">    yMat = mat(yArr).T</span><br><span class="line">    xTx = xMat.T*xMat</span><br><span class="line">    <span class="keyword">if</span> linalg.det(xTx) == <span class="number">0.0</span>:</span><br><span class="line">        <span class="keyword">print</span> <span class="string">"This matrix is singular, cannot do inverse"</span></span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    ws = xTx.I * (xMat.T*yMat)</span><br><span class="line">    <span class="keyword">return</span> ws</span><br></pre></td></tr></table></figure></p>
+<p><strong>运行结果</strong><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="prompt">&gt;&gt;&gt; </span><span class="keyword">import</span> regression</span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>xArr, yArr = regression.loadDataSet(<span class="string">'ex0.txt'</span>)</span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>ws = regression.standRegres(xArr, yArr)</span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>ws</span><br><span class="line">matrix([[ <span class="number">3.00774324</span>],</span><br><span class="line">        [ <span class="number">1.69532264</span>]])</span><br></pre></td></tr></table></figure></p>
+<p><strong>作出回归曲线</strong><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># plotReg.py</span></span><br><span class="line">xMat=mat(xArr)</span><br><span class="line">yMat=mat(yArr)</span><br><span class="line">yHat = xMat*ws</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">fig = plt.figure()</span><br><span class="line">ax = fig.add_subplot(<span class="number">111</span>)</span><br><span class="line">ax.scatter(xMat[:,<span class="number">1</span>].flatten().A[<span class="number">0</span>], yMat.T[:,<span class="number">0</span>].flatten().A[<span class="number">0</span>]) <span class="comment"># 散点图</span></span><br><span class="line">xCopy=xMat.copy()</span><br><span class="line">xCopy.sort(<span class="number">0</span>)</span><br><span class="line">yHat=xCopy*ws <span class="comment"># y=ws[0]+ws[1]*X1</span></span><br><span class="line">ax.plot(xCopy[:,<span class="number">1</span>], yHat)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure></p>
+<p><img src="/images/MachineLearninginAction/ml_chap8_reg1.png" alt="Regression1"></p>
+<p>对’ex1.txt’中的数据，同样求出其回归系数，ws = [3.00772239, 1.66874279]，和上面的结果比较类似。<br><img src="/images/MachineLearninginAction/ml_chap8_reg2.png" alt="Regression2"></p>
+<p>为了比较上面两组数据拟合的效果，可以通过计算相关系数来评价估计的效果。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ex0.txt</span></span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>yHat = xMat*ws</span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>corrcoef(yHat.T, yMat)</span><br><span class="line">array([[ <span class="number">1.</span>        ,  <span class="number">0.98647356</span>],</span><br><span class="line">       [ <span class="number">0.98647356</span>,  <span class="number">1.</span>        ]])</span><br><span class="line"></span><br><span class="line"><span class="comment"># ex1.txt</span></span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>yHat = xMat*ws</span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>corrcoef(yHat.T, yMat)</span><br><span class="line">array([[ <span class="number">1.</span>        ,  <span class="number">0.98524753</span>],</span><br><span class="line">       [ <span class="number">0.98524753</span>,  <span class="number">1.</span>        ]])</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h2 id="局部加权线性回归">局部加权线性回归</h2><p>由于线性回归求的是具有最小均方误差的无偏估计，因此有可能出现欠拟合现象，也就是说均方误差比较大，但又没有办法再降低了。为了降低最小均方误差，有一个办法就是局部加权线性回归（Locally weighted linear regression）。说白了就是对于不同的样本，对相应的回归系数$\mathbf{w}$乘以一定的权重，从而使回归曲线变形，从而降低均方误差。</p>
+<p>对于线性回归中的回归系数$\hat{\mathbf{w}}$作一定的修改：<br>$$\hat{\mathbf{w}}=\left(X^TWX\right)^{-1}X^TWY,$$其中，$W$为权重矩阵，用来给每个数据点赋予权重。</p>
+<p>LWLR使用“核”（与支持向量机中的核类似）来对附近的点赋予更高的权重。核的类型可以自由选择，最常用的核就是高斯核，高斯核对应的权重如下：<br>$$W(j,j)=exp\left(\frac{|x^{(j)}-x|}{-2k^2}\right), j=1,2,…,n.$$这样就构建了一个只含对角元素的权重矩阵W，并且点$x$与$x^{(j)}$越近，$W(j,j)$将会越大。上述公式包含一个需要用户指定的参数$k$它决定了对附近的点赋予多大的权重。</p>
+<p><strong>加权矩阵以及LWLR代码实现</strong><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">lwlr</span><span class="params">(testPoint, xArr, yArr, k=<span class="number">1.0</span>)</span>:</span></span><br><span class="line">    xMat = mat(xArr); yMat = mat(yArr).T</span><br><span class="line">    m = shape(xMat)[<span class="number">0</span>]</span><br><span class="line">    <span class="comment"># 创建对角矩阵并赋予权重</span></span><br><span class="line">    weights = mat(eye((m)))</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> range(m):</span><br><span class="line">        diffMat = testPoint - xMat[j,:]</span><br><span class="line">        weights[j,j] = exp(diffMat*diffMat.T/(-<span class="number">2.0</span>*k**<span class="number">2</span>))</span><br><span class="line">    xTx = xMat.T*(weights*xMat)</span><br><span class="line">    <span class="keyword">if</span> linalg.det(xTx) == <span class="number">0.0</span>:</span><br><span class="line">        <span class="keyword">print</span> <span class="string">"This matrix is singular, cannot do inverse"</span></span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    ws = xTx.I*(xMat.T*(weights*yMat))</span><br><span class="line">    <span class="keyword">return</span> testPoint*ws</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">lwlrTest</span><span class="params">(testArr, xArr, yArr, k=<span class="number">1.0</span>)</span>:</span></span><br><span class="line">    m = shape(testArr)[<span class="number">0</span>]</span><br><span class="line">    yHat = zeros(m)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(m):</span><br><span class="line">        yHat[i] = lwlr(testArr[i],xArr,yArr,k)</span><br><span class="line">    <span class="keyword">return</span> yHat</span><br></pre></td></tr></table></figure></p>
+<p><strong>测试结果</strong><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># PlotLWLR.py</span></span><br><span class="line"><span class="keyword">from</span> numpy <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> regression</span><br><span class="line"></span><br><span class="line">xArr,yArr=regression.loadDataSet(<span class="string">'ex0.txt'</span>)</span><br><span class="line">xMat=mat(xArr)</span><br><span class="line">srtInd = xMat[:,<span class="number">1</span>].argsort(<span class="number">0</span>) <span class="comment"># 对xMat排序，得到索引</span></span><br><span class="line">xSort=xMat[srtInd][:,<span class="number">0</span>,:]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 得到不同k的曲线</span></span><br><span class="line">ks = [<span class="number">1.0</span>, <span class="number">0.01</span>, <span class="number">0.003</span>]</span><br><span class="line"><span class="keyword">for</span> k <span class="keyword">in</span> ks:</span><br><span class="line">    yHat = regression.lwlrTest(xArr, xArr, yArr, k)</span><br><span class="line">    fig = plt.figure()</span><br><span class="line">    ax = fig.add_subplot(<span class="number">111</span>)</span><br><span class="line">    plt.title(<span class="string">'k = %s'</span> %k)</span><br><span class="line">    ax.plot(xSort[:,<span class="number">1</span>],yHat[srtInd])</span><br><span class="line">    ax.scatter(xMat[:,<span class="number">1</span>].flatten().A[<span class="number">0</span>], mat(yArr).T.flatten().A[<span class="number">0</span>] , s=<span class="number">2</span>, c=<span class="string">'red'</span>)</span><br><span class="line">    plt.show()</span><br></pre></td></tr></table></figure></p>
+<p><img src="/images/MachineLearninginAction/ml_chap8_LWLR1.png" alt="LWLR1"><br><img src="/images/MachineLearninginAction/ml_chap8_LWLR2.png" alt="LWLR2"><br><img src="/images/MachineLearninginAction/ml_chap8_LWLR3.png" alt="LWLR3"></p>
+<p>可以看出，k=1.0时的模型效果与最小二乘法差不多，k=0.01时该模型可以挖出数据的潜在规律，而k=0.003时则考虑了太多的噪声，进而导致了过拟合现象</p>
+<p><strong>举例：预测鲍鱼的年龄</strong></p>
+<p>一份来自UCI数据集合的数据，记录了鲍鱼（一种介壳类水生动物）的年龄。鲍鱼年龄可以从鲍鱼壳的层数推算得到。这里将使用LWLR，通鲍鱼壳的层数来预测鲍鱼年龄。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">rssError</span><span class="params">(yArr,yHatArr)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> ((yArr-yHatArr)**<span class="number">2</span>).sum()</span><br><span class="line"></span><br><span class="line"><span class="comment"># testLWLR.py</span></span><br><span class="line"><span class="keyword">from</span> numpy <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> regression</span><br><span class="line">abX,abY=regression.loadDataSet(<span class="string">'abalone.txt'</span>)</span><br><span class="line">yHat01=regression.lwlrTest(abX[<span class="number">0</span>:<span class="number">99</span>],abX[<span class="number">0</span>:<span class="number">99</span>],abY[<span class="number">0</span>:<span class="number">99</span>],<span class="number">0.1</span>)</span><br><span class="line">yHat1=regression.lwlrTest(abX[<span class="number">0</span>:<span class="number">99</span>],abX[<span class="number">0</span>:<span class="number">99</span>],abY[<span class="number">0</span>:<span class="number">99</span>],<span class="number">1</span>)</span><br><span class="line">yHat10=regression.lwlrTest(abX[<span class="number">0</span>:<span class="number">99</span>],abX[<span class="number">0</span>:<span class="number">99</span>],abY[<span class="number">0</span>:<span class="number">99</span>],<span class="number">10</span>)</span><br><span class="line"><span class="keyword">print</span> <span class="string">"The error of estimate when k = 0.1 is"</span>, regression.rssError(abY[<span class="number">0</span>:<span class="number">99</span>],yHat01.T)</span><br><span class="line"><span class="keyword">print</span> <span class="string">"The error of estimate when k = 1   is"</span>, regression.rssError(abY[<span class="number">0</span>:<span class="number">99</span>],yHat1.T)</span><br><span class="line"><span class="keyword">print</span> <span class="string">"The error of estimate when k = 10  is"</span>, regression.rssError(abY[<span class="number">0</span>:<span class="number">99</span>],yHat10.T)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 结果为</span></span><br><span class="line">&gt;&gt;&gt;</span><br><span class="line">The error of estimate when k = <span class="number">0.1</span> <span class="keyword">is</span> <span class="number">56.7862596808</span></span><br><span class="line">The error of estimate when k = <span class="number">1</span>   <span class="keyword">is</span> <span class="number">429.89056187</span></span><br><span class="line">The error of estimate when k = <span class="number">10</span>  <span class="keyword">is</span> <span class="number">549.118170883</span></span><br></pre></td></tr></table></figure>
+<p>可以看到，使用较小的核将得到较低的误差。但是在训练集上的结果是相反的。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">ynew01=regression.lwlrTest(abX[<span class="number">100</span>:<span class="number">199</span>],abX[<span class="number">0</span>:<span class="number">99</span>],abY[<span class="number">0</span>:<span class="number">99</span>],<span class="number">0.1</span>)</span><br><span class="line">ynew1=regression.lwlrTest(abX[<span class="number">100</span>:<span class="number">199</span>],abX[<span class="number">0</span>:<span class="number">99</span>],abY[<span class="number">0</span>:<span class="number">99</span>],<span class="number">1</span>)</span><br><span class="line">ynew10=regression.lwlrTest(abX[<span class="number">100</span>:<span class="number">199</span>],abX[<span class="number">0</span>:<span class="number">99</span>],abY[<span class="number">0</span>:<span class="number">99</span>],<span class="number">10</span>)</span><br><span class="line"><span class="keyword">print</span> <span class="string">"The error of estimate when k = 0.1 is"</span>, regression.rssError(abY[<span class="number">100</span>:<span class="number">199</span>],ynew01.T)</span><br><span class="line"><span class="keyword">print</span> <span class="string">"The error of estimate when k = 1   is"</span>, regression.rssError(abY[<span class="number">0</span>:<span class="number">99</span>],ynew1.T)</span><br><span class="line"><span class="keyword">print</span> <span class="string">"The error of estimate when k = 10  is"</span>, regression.rssError(abY[<span class="number">0</span>:<span class="number">99</span>],ynew10.T)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 结果为</span></span><br><span class="line">&gt;&gt;&gt;</span><br><span class="line">The error of estimate when k = <span class="number">0.1</span> <span class="keyword">is</span> <span class="number">16045.5001241</span></span><br><span class="line">The error of estimate when k = <span class="number">1</span>   <span class="keyword">is</span> <span class="number">3207.68962882</span></span><br><span class="line">The error of estimate when k = <span class="number">10</span>  <span class="keyword">is</span> <span class="number">3320.08921091</span></span><br></pre></td></tr></table></figure></p>
+<p>使用局部加权线性回归来构建模型，可以得到比普通线性回归更好的效果。但是每次必须在整个数据集上运行。不可以用比部分数据的回归函数来预测另一部分数据的结果。</p>
+<hr>
+<h2 id="通过缩减系数来“理解”数据">通过缩减系数来“理解”数据</h2><p>如果数据的特征比样本点还多应该怎么办？是否还可以使用线性回归和之前的方法来做预测？答案是否定的，即不能再使用前面介绍的方法。这是因为在计算$(X^TX)^{-1}$的时候会出错。如果特征比样本点还多（m&gt;n），也就是说输入数据的矩阵$X$不是满秩矩阵。非满秩矩阵在求逆时会出现问题。</p>
+<p>为了解决这个问题，统计学家引入了岭回归（Ridge regression）的概念。接着还有lasso法，该方法效果很好但计算复杂。此外还有前向逐步回归，可以得到与lasso差不多的效果，且更容易实现。</p>
+<p><strong>岭回归</strong></p>
+<p>由于$X^TX$不是可逆的，因此通过在其后加一个矩阵$\lambda I$，进而可以对$X^TX+\lambda I$求逆。其中$I$为$n\times n$的单位矩阵。于是可以得到回归系数的计算公式<br>$$\hat{\mathbf{w}}=(X^TX+\lambda I)^{-1}X^TY.$$</p>
+<p>以上给出的求解$\hat{\mathbf{w}}$的方法被称作<code>吉洪诺夫正则化</code>（Tikhonov regularization）方法[4]：</p>
+<blockquote>
+<p>对于线性方程$Ax=b$，当解$x$不存在或者解不唯一时，就是所谓的病态问题（ill-posed problem）。但是在很多时候，我们需要对病态问题求解，那怎么做？</p>
+<p>对于解不存在的情况，解决办法是增加一些条件找一个近似解；对于解不唯一的情况，解决办法是增加一些限制缩小解的范围。这种通过增加条件或限制要求求解病态问题的方法就是正则化方法。</p>
+</blockquote>
+<p>以下是通过岭回归给出回归系数的python代码。在40个不同的$\lambda$下，给出不同的回归系数。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">ridgeRegres</span><span class="params">(xMat, yMat, lam=<span class="number">0.2</span>)</span>:</span></span><br><span class="line">    xTx = xMat.T*xMat</span><br><span class="line">    denom = xTx + eye(shape(xMat)[<span class="number">1</span>])*lam</span><br><span class="line">    <span class="keyword">if</span> linalg.det(denom) == <span class="number">0.0</span>:</span><br><span class="line">        <span class="keyword">print</span> <span class="string">"This matrix is singular, cannot do inverse"</span></span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    ws = denom.I * (xMat.T*yMat)</span><br><span class="line">    <span class="keyword">return</span> ws</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">ridgeTest</span><span class="params">(xArr, yArr)</span>:</span></span><br><span class="line">    <span class="comment"># 数据标准化处理</span></span><br><span class="line">    xMat = mat(xArr); yMat = mat(yArr).T</span><br><span class="line">    yMean = mean(yMat,<span class="number">0</span>); yMat = yMat - yMean <span class="comment"># 使y零均值</span></span><br><span class="line">    xMeans = mean(xMat,<span class="number">0</span>); xVar = var(xMat,<span class="number">0</span>)</span><br><span class="line">    xMat = (xMat - xMeans)/xVar <span class="comment"># 零均值、单位方差</span></span><br><span class="line">    numTestPts = <span class="number">40</span> <span class="comment"># 取40个不同的lambda</span></span><br><span class="line">    wMat = zeros((numTestPts,shape(xMat)[<span class="number">1</span>]))</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(numTestPts):</span><br><span class="line">        ws = ridgeRegres(xMat, yMat, exp(i-<span class="number">10</span>))</span><br><span class="line">        wMat[i,:] = ws.T</span><br><span class="line">    <span class="keyword">return</span> wMat</span><br></pre></td></tr></table></figure></p>
+<p>测试结果：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="prompt">&gt;&gt;&gt; </span><span class="keyword">import</span> regression</span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>abx, aby = regression.loadDataSet(<span class="string">'abalone.txt'</span>)</span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>ridgeW = regression.ridgeTest(abx, aby)</span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>fig = plt.figure()</span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>ax = fig.add_subplot(<span class="number">111</span>)</span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>ax.plot(ridgeW)</span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>plt.xlabel(<span class="string">'$\log\lambda$'</span>)</span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>plt.ylabel(<span class="string">'$w$'</span>)</span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>plt.show()</span><br></pre></td></tr></table></figure></p>
+<p><img src="/images/MachineLearninginAction/ml_chap8_ridge.png" alt="ridge"><br>岭回归的回归系数变化图。该图绘出了回归系数与$\log\lambda$的关系。在最左边，即$\lambda$最小时，可以得到所有系数的原始值（与线性回归一致）；而在右边，系数全部缩减成0；在中间部分的某值将可以取得最好的预测效果。</p>
+<p><strong>lasso</strong></p>
+<p><strong>前向逐步回归</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">regularize</span><span class="params">(xMat)</span>:</span> <span class="comment"># 数据标准化处理，零均值、单位方差</span></span><br><span class="line">    inMat = xMat.copy()</span><br><span class="line">    inMeans = mean(inMat,<span class="number">0</span>)</span><br><span class="line">    inVar = var(inMat,<span class="number">0</span>)</span><br><span class="line">    inMat = (inMat - inMeans)/inVar</span><br><span class="line">    <span class="keyword">return</span> inMat</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">stageWise</span><span class="params">(xArr, yArr, eps=<span class="number">0.01</span>, numIt=<span class="number">100</span>)</span>:</span></span><br><span class="line">    xMat = mat(xArr); yMat=mat(yArr).T</span><br><span class="line">    yMean = mean(yMat,<span class="number">0</span>)</span><br><span class="line">    yMat = yMat - yMean</span><br><span class="line">    xMat = regularize(xMat)</span><br><span class="line">    m,n = shape(xMat)</span><br><span class="line">    returnMat = zeros((numIt,n))</span><br><span class="line">    ws = zeros((n,<span class="number">1</span>)); wsTest = ws.copy(); wsMax = ws.copy()</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(numIt):</span><br><span class="line">        <span class="keyword">print</span> ws.T</span><br><span class="line">        lowestError = inf; </span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(n):</span><br><span class="line">            <span class="keyword">for</span> sign <span class="keyword">in</span> [-<span class="number">1</span>,<span class="number">1</span>]:</span><br><span class="line">                wsTest = ws.copy()</span><br><span class="line">                wsTest[j] += eps*sign</span><br><span class="line">                yTest = xMat*wsTest</span><br><span class="line">                rssE = rssError(yMat.A,yTest.A)</span><br><span class="line">                <span class="keyword">if</span> rssE &lt; lowestError:</span><br><span class="line">                    lowestError = rssE</span><br><span class="line">                    wsMax = wsTest</span><br><span class="line">        ws = wsMax.copy()</span><br><span class="line">        returnMat[i,:]=ws.T</span><br><span class="line">    <span class="keyword">return</span> returnMat</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="参考文献">参考文献</h2><p>[1] P. Harrington. <em>Machine Learning in Action</em>. Greenwich, CT, USA: Manning, 2012.<br>[2] <a href="http://blog.csdn.net/loadstar_kun/article/details/17963157" target="_blank" rel="external">http://blog.csdn.net/loadstar_kun/article/details/17963157</a><br>[3] <a href="http://blog.163.com/phoenixbai@126/blog/static/1086513492013953817839/" target="_blank" rel="external">http://blog.163.com/phoenixbai@126/blog/static/1086513492013953817839/</a><br>[4] <a href="https://en.wikipedia.org/wiki/Tikhonov_regularization" target="_blank" rel="external">https://en.wikipedia.org/wiki/Tikhonov_regularization</a></p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag">#python</a>
+          
+            <a href="/tags/机器学习/" rel="tag">#机器学习</a>
+          
+            <a href="/tags/算法/" rel="tag">#算法</a>
+          
+            <a href="/tags/线性回归/" rel="tag">#线性回归</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/07/10/cross-gfirew/" rel="prev">如何访问Gmail和Google群</a>
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/03/25/machine-learning-notes6/" rel="next">AdaBoost元算法</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+            </div>
+
+            
+
+            
+              <div class="comments" id="comments">
+                
+                  <div class="ds-thread" data-thread-key="2015/04/15/machine-learning-notes7/"
+                       data-title="预测数值型数据——回归" data-url="http://edmund.xyz/2015/04/15/machine-learning-notes7/">
+                  </div>
+                
+              </div>
+            
+        </div>
+
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/default_avatar.jpg" alt="Edmund" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">Edmund</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description"></p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">10</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">2</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/ycliuxinwei" target="_blank">GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://cn.linkedin.com/pub/xinwei-liu/74/2a9/136" target="_blank">Linkedin</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#线性回归"><span class="nav-number">1.</span> <span class="nav-text">线性回归</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#局部加权线性回归"><span class="nav-number">2.</span> <span class="nav-text">局部加权线性回归</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通过缩减系数来“理解”数据"><span class="nav-number">3.</span> <span class="nav-text">通过缩减系数来“理解”数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献"><span class="nav-number">4.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+    </main>
+
+    <footer id="footer" class="footer">
+        <div class="footer-inner">
+            <div class="copyright" >
+  
+  &copy; &nbsp;  2014 - 
+  <span itemprop="copyrightYear">2015</span>
+  <span class="with-love">
+    <i class="icon-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Edmund</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+
+        </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+</div>
+
+<script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"edmund"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+    
+  
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.4"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.4"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.4" id="motion.global"></script>
+
+
+
+  <script type="text/javascript" src="/js/search-toggle.js"></script>
+
+
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.4" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+          var self = this;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      $(indicator).velocity('stop').velocity({
+        opacity: action === 'show' ? 0.4 : 0
+      }, { duration: 100 });
+    }
+
+  });
+</script>
+
+
+  <script type="text/javascript" id="sidebar.nav">
+    $(document).ready(function () {
+      var html = $('html');
+
+      $('.sidebar-nav li').on('click', function () {
+        var item = $(this);
+        var activeTabClassName = 'sidebar-nav-active';
+        var activePanelClassName = 'sidebar-panel-active';
+        if (item.hasClass(activeTabClassName)) {
+          return;
+        }
+
+        var currentTarget = $('.' + activePanelClassName);
+        var target = $('.' + item.data('target'));
+
+        currentTarget.velocity('transition.slideUpOut', 200, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', 200)
+            .addClass(activePanelClassName);
+        });
+
+        item.siblings().removeClass(activeTabClassName);
+        item.addClass(activeTabClassName);
+      });
+
+      $('.post-toc a').on('click', function (e) {
+        e.preventDefault();
+        var offset = $(escapeSelector(this.getAttribute('href'))).offset().top;
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        });
+      });
+
+      // Expand sidebar on post detail page by default, when post has a toc.
+      var $tocContent = $('.post-toc-content');
+      if (isDesktop() && CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    });
+  </script>
+
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        if (CONFIG.sidebar === 'always') {
+            displaySidebar();
+        }
+    });
+</script>
+
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+
+
+
+
+
+<!-- lazyload -->
+<script type="text/javascript" src="/js/lazyload.js"></script>
+<script type="text/javascript">
+    jQuery(function () {
+        jQuery("#posts img").lazyload({
+            placeholder: "/images/loading.gif",
+            effect: "fadeIn"
+        });
+    });
+</script>
+</body>
+</html>

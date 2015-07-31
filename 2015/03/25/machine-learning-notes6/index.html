@@ -1,0 +1,730 @@
+<!doctype html>
+<html class="theme-next use-motion theme-next-mist">
+<head>
+    
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.4"/>
+
+
+
+
+  <meta name="keywords" content="ROC曲线,bagging,boosting,python,分类器评价,机器学习,算法," />
+
+
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.4" />
+
+
+<meta name="description" content="AdaBoost历史Adaboost算法是boosting算法的一种，都是将若干个分类器整合为一个分类器的方法。在boosting算法产生之前，还出现过一种比较重要的将多个分类器整合为一个分类器的方法，即bagging方法。
+bagging方法
+自举汇聚法（bootstrap aggregating）也叫做bagging方法，它表示如下过程：
+从大小为$n$的原始数据集$D$中，分别独立随机地抽取">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AdaBoost元算法">
+<meta property="og:url" content="http://edmund.xyz/2015/03/25/machine-learning-notes6/index.html">
+<meta property="og:site_name" content="Edmund">
+<meta property="og:description" content="AdaBoost历史Adaboost算法是boosting算法的一种，都是将若干个分类器整合为一个分类器的方法。在boosting算法产生之前，还出现过一种比较重要的将多个分类器整合为一个分类器的方法，即bagging方法。
+bagging方法
+自举汇聚法（bootstrap aggregating）也叫做bagging方法，它表示如下过程：
+从大小为$n$的原始数据集$D$中，分别独立随机地抽取">
+<meta property="og:image" content="http://edmund.xyz/images/MachineLearninginAction/ml_chap7_bagging.png">
+<meta property="og:image" content="http://edmund.xyz/images/MachineLearninginAction/ml_chap7_adaboost.png">
+<meta property="og:image" content="http://edmund.xyz/images/MachineLearninginAction/ml_chap7_errors.png">
+<meta property="og:image" content="http://edmund.xyz/images/MachineLearninginAction/ml_chap7_confmatrix.png">
+<meta property="og:image" content="http://edmund.xyz/images/MachineLearninginAction/ml_chap7_roc.png">
+<meta property="og:image" content="http://edmund.xyz/images/MachineLearninginAction/ml_chap7_roc1.png">
+<meta property="og:updated_time" content="2015-07-15T10:03:26.573Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="AdaBoost元算法">
+<meta name="twitter:description" content="AdaBoost历史Adaboost算法是boosting算法的一种，都是将若干个分类器整合为一个分类器的方法。在boosting算法产生之前，还出现过一种比较重要的将多个分类器整合为一个分类器的方法，即bagging方法。
+bagging方法
+自举汇聚法（bootstrap aggregating）也叫做bagging方法，它表示如下过程：
+从大小为$n$的原始数据集$D$中，分别独立随机地抽取">
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'hide'
+  };
+</script>
+
+    <title> AdaBoost元算法 // Edmund </title>
+</head>
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+<!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-58837095-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+<div class="container one-column page-post-detail">
+    <div class="headband"></div>
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand" rel="start">
+      <span class="logo">
+        <i class="icon-logo"></i>
+      </span>
+      <span class="site-title">Edmund</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon icon-home"></i> <br />
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            <i class="menu-item-icon icon-categories"></i> <br />
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            <i class="menu-item-icon icon-tags"></i> <br />
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            <i class="menu-item-icon icon-archives"></i> <br />
+            归档
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+        </div>
+    </header>
+
+    <main id="main" class="main">
+        <div class="main-inner">
+            <div id="content" class="content">
+                
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              AdaBoost元算法
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2015-03-25T18:15:20+08:00" content="2015-03-25">
+            2015-03-25
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a href="/categories/学习笔记/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a></span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2015/03/25/machine-learning-notes6/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2015/03/25/machine-learning-notes6/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><h2 id="AdaBoost历史">AdaBoost历史</h2><p>Adaboost算法是boosting算法的一种，都是将若干个分类器整合为一个分类器的方法。在boosting算法产生之前，还出现过一种比较重要的将多个分类器整合为一个分类器的方法，即<code>bagging方法</code>。</p>
+<p><strong>bagging方法</strong></p>
+<p>自举汇聚法（bootstrap aggregating）也叫做bagging方法，它表示如下过程：</p>
+<p>从大小为$n$的原始数据集$D$中，分别独立随机地抽取$n’$（$n’&lt;n$）个数据形成自助数据集$D’$，并且将这个过程独立地进行多次，直到产生多个独立的自助数据集。【bagging中的数据集通常被认为是放回取样得到的，比如要得到一个大小为n的新数据集，该数据集中的每个样本都是在原始数据集中随机抽样（即抽样之后又放回）得到的。】然后每一个数据集都被独立地用于训练一个“分量分类器”。最终的分类判别将根据这些分量分类器各自的判决结果的投票来决定。通常，这些分量分类器的模型都是一样的。</p>
+<a id="more"></a>
+<p><img src="/images/MachineLearninginAction/ml_chap7_bagging.png" alt="bagging"></p>
+<p><em>随机森林法</em></p>
+<p>随机森林法，是一种比较先进的bagging方法，<code>随机森林</code>指的是利用多棵决策树对样本进行训练并预测的一种分类器。随机森林，是用随机的方式建立一个决策树森林，决策树森林里面有很多的决策树组成，随机森林的每一棵决策树之间是没有关联的。在得到森林之后，当有一个新的输入样本进入的时候，就让森林中的每一棵决策树分别进行一下判断，看看这个样本应该属于哪一类（对于分类算法），然后看看哪一类被选择最多，就预测这个样本为那一类。具体的算法步骤可以参考[3]，这种方法是由Leo Breiman和Adele Cutler提出的，并被注册成了商标。</p>
+<p><strong>boosting方法</strong></p>
+<p>boosting是一种与bagging很类似的技术。不论是在bagging还是boosting当中，所使用的多个分类器的类型都是一致的。但是在前者当中，不同的分类器是通过串行训练而获得的，每个新分类器都根据已训练出的分类器的性能来进行训练。boosting是通过集中关注被已有分类器错分的那些数据来获得新的分类器。</p>
+<p>boosting和bagging区别：bagging采用均匀取样，而boosting根据错误率来取样，因此boosting的分类精度要优于bagging。bagging的训练集的选择是随机的，各轮训练集之间相互独立，而boostlng的各轮训练集的选择与前面各轮的学习结果有关；bagging的各个预测函数没有权重，而boosting是有权重的；bagging的各个预测函数可以并行生成，而boosting的各个预测函数只能顺序生成。对于象神经网络这样极为耗时的学习方法。bagging可通过并行训练节省大量时间开销。bagging和boosting都可以有效地提高分类的准确性。在大多数数据集中，boosting的准确性比bagging高。在有些数据集中，boosting会引起退化——Overfit[4]。</p>
+<hr>
+<h2 id="AdaBoost">AdaBoost</h2><p>刚才提到的bagging方法是将弱分类器进行简单的组合，boosting方法效率和精度更高，但是要求事先知道弱学习算法学习正确率的下限。</p>
+<p>1995年，Freund和schapire改进了boosting算法，提出了AdaBoost（Adaptive Boosting）算法[2]，该算法效率和boosting算法几乎相同，但不需要任何关于弱学习器的先验知识，因而更容易应用到实际问题当中。之后，Freund和Schapire进一步提出了改变boosting投票权重的AdaBoost.M1、AdaBoost.M2等算法，在机器学习领域受到了极大的关注。</p>
+<p><strong>算法步骤</strong></p>
+<p><strong>步骤1</strong>. 首先，初始化$N$个样本的权值分布。每一个训练样本初始权值相同：<br>$$D_1={w_n^{(1)}=\frac{1}{N}},\ n=1,2,…,N.$$</p>
+<p><strong>步骤2</strong>. For $m=1,2,…,M$</p>
+<ol>
+<li><p>使用具有权值分布$D_m$的训练样本学习，得到基本分类器：选取让加权误差方程<br>$$J_m=\sum_{n=1}^N w_n^{(m)}I\left(y_m(x_n)\neq t_n\right)$$最小来设计基本分类器。</p>
+</li>
+<li><p>计算在训练样本上的分类错误率（错误率等于0退出循环）：<br>$$\epsilon_m=\frac{J_m}{\sum_{n=1}^N w_n^{(m)}}$$</p>
+</li>
+<li><p>得到第$m$个分类器的权重：<br>$$\alpha_m=\ln\left\lbrace\frac{1-\epsilon_m}{\epsilon_m}\right\rbrace$$</p>
+</li>
+<li><p>更新训练样本的权值分布，用于下一轮迭代：<br>$$w_n^{(m+1)}=w_n^{(m)}\exp\left\lbrace\alpha_mI\left(y_m(x_n)\neq t_n\right)\right\rbrace.$$</p>
+</li>
+</ol>
+<p><strong>步骤3</strong>. 给出组合分类器表达式：<br>$$Y_M(x)=\mathrm{sign}\left(\sum_{m=1}^M\alpha_m y_m(x)\right)$$</p>
+<p><img src="/images/MachineLearninginAction/ml_chap7_adaboost.png" alt="bagging"></p>
+<p><strong>单层决策树</strong></p>
+<p>下边三个函数的功能分别是：输入数据、分类和生成单决策树。通过确定错误率最小值，来得到相应的划分边界以及决策树划分方式（一个根节点）。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> numpy <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">loadsimpData</span><span class="params">()</span>:</span></span><br><span class="line">    data = matrix([[<span class="number">1.0</span>, <span class="number">2.1</span>],</span><br><span class="line">        [<span class="number">2.0</span>, <span class="number">1.1</span>],</span><br><span class="line">        [<span class="number">1.3</span>, <span class="number">1.0</span>],</span><br><span class="line">        [<span class="number">1.0</span>, <span class="number">1.0</span>],</span><br><span class="line">        [<span class="number">2.0</span>, <span class="number">1.0</span>],</span><br><span class="line">        [<span class="number">1.4</span>, <span class="number">1.2</span>]])</span><br><span class="line"></span><br><span class="line">    labels = [<span class="number">1.0</span>, <span class="number">1.0</span>, -<span class="number">1.0</span>, -<span class="number">1.0</span>, <span class="number">1.0</span>, -<span class="number">1.0</span>]</span><br><span class="line"><span class="keyword">return</span> data, labels</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">stumpclassify</span><span class="params">(dataMatrix, dimen, thresVal, thresIneq)</span>:</span></span><br><span class="line">    retArray = ones((shape(dataMatrix)[<span class="number">0</span>], <span class="number">1</span>))</span><br><span class="line">    <span class="keyword">if</span> thresIneq == <span class="string">'lt'</span>: <span class="comment"># x &lt;= thresval =&gt; -1</span></span><br><span class="line">        retArray[dataMatrix[:, dimen] &lt;= thresVal] = -<span class="number">1.0</span></span><br><span class="line">    <span class="keyword">else</span>: <span class="comment"># x &gt; thresval =&gt; -1</span></span><br><span class="line">        retArray[dataMatrix[:, dimen] &gt; thresVal] = -<span class="number">1.0</span></span><br><span class="line">    <span class="keyword">return</span> retArray</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成单层决策树</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">buildStump</span><span class="params">(dataArr, classLabels, D)</span>:</span></span><br><span class="line">    dataMatrix = mat(dataArr)</span><br><span class="line">    labelMat = mat(classLabels).T</span><br><span class="line">    m, n = shape(dataMatrix) <span class="comment"># 样本数 m, 数据维度(特征) n</span></span><br><span class="line">    numSteps = <span class="number">10.0</span> <span class="comment"># 步数</span></span><br><span class="line">    bestStump = &#123;&#125;</span><br><span class="line">    bestClasEst = mat(zeros((m,<span class="number">1</span>)))</span><br><span class="line">    minError = inf <span class="comment"># 初始加权误差为无穷大</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(n): <span class="comment"># 遍历所有维度: 2维</span></span><br><span class="line">        <span class="comment"># 上下限</span></span><br><span class="line">        rangeMin = dataMatrix[:,i].min()</span><br><span class="line">        rangeMax = dataMatrix[:,i].max()</span><br><span class="line">        stepSize = (rangeMax - rangeMin)/numSteps <span class="comment"># 步长=(上限-下限)/步数</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(-<span class="number">1</span>,int(numSteps)+<span class="number">1</span>): <span class="comment"># 从下限到上限每一个步长的所有取值</span></span><br><span class="line">            threshVal = rangeMin + float(j) * stepSize <span class="comment"># 作为分类边界</span></span><br><span class="line">            <span class="keyword">for</span> inequal <span class="keyword">in</span> [<span class="string">'lt'</span>, <span class="string">'gt'</span>]: <span class="comment"># 遍历所有不等号取值情况: &lt;= 和 &gt;</span></span><br><span class="line">                predictedVals = stumpclassify(dataMatrix, i, threshVal, inequal)</span><br><span class="line">                errArr = mat(ones((m,<span class="number">1</span>)))</span><br><span class="line">                errArr[predictedVals == labelMat] = <span class="number">0</span> <span class="comment"># 预测准确则为0</span></span><br><span class="line">                weightedError = D.T*errArr <span class="comment"># \sum error*w_m</span></span><br><span class="line">                <span class="keyword">print</span> <span class="string">"split: dim %d, thresh %.2f, thresh ineqal: \</span><br><span class="line">                    %s, the weighted error is %.3f"</span> % \</span><br><span class="line">                    (i, threshVal, inequal, weightedError)</span><br><span class="line">                <span class="keyword">if</span> weightedError &lt; minError: <span class="comment"># 该分类器所有加权误差最小的那个</span></span><br><span class="line">                    minError = weightedError</span><br><span class="line">                    bestClasEst = predictedVals.copy()</span><br><span class="line">                    bestStump[<span class="string">'dim'</span>] = i</span><br><span class="line">                    bestStump[<span class="string">'thresh'</span>] = threshVal</span><br><span class="line">                    bestStump[<span class="string">'ineq'</span>] = inequal</span><br><span class="line">    <span class="keyword">return</span> bestStump, minError, bestClasEst</span><br></pre></td></tr></table></figure>
+<p><strong>AdaBoost训练过程</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">adaBoostTrainDS</span><span class="params">(dataArr,classLabels,numIt=<span class="number">40</span>)</span>:</span></span><br><span class="line">    weakClassArr = []</span><br><span class="line">    m = shape(dataArr)[<span class="number">0</span>]</span><br><span class="line">    D = mat(ones((m,<span class="number">1</span>))/m) <span class="comment"># 初始样本的权值 D=1/N</span></span><br><span class="line">    aggClassEst = mat(zeros((m,<span class="number">1</span>)))</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(numIt):</span><br><span class="line">        bestStump, error, classEst = buildStump(dataArr, classLabels, D) <span class="comment"># 生成单层决策树</span></span><br><span class="line">        alpha = float(<span class="number">0.5</span>*log((<span class="number">1.0</span>-error)/max(error,<span class="number">1e-16</span>))) <span class="comment"># 分类器权重alpha</span></span><br><span class="line">        bestStump[<span class="string">'alpha'</span>] = alpha</span><br><span class="line">        weakClassArr.append(bestStump) <span class="comment"># 存储alpha</span></span><br><span class="line">        <span class="keyword">print</span> <span class="string">"classEst: "</span>, classEst.T</span><br><span class="line">        <span class="comment"># 计算下一次迭代样本权值 D(t+1) = D(t)exp(+-alpha)</span></span><br><span class="line">        expon = multiply(-<span class="number">1</span>*alpha*mat(classLabels).T, classEst)</span><br><span class="line">        D = multiply(D,exp(expon))</span><br><span class="line">        D = D/D.sum() <span class="comment"># 保证D在0-1之间</span></span><br><span class="line">        aggClassEst += alpha*classEst</span><br><span class="line">        <span class="keyword">print</span> <span class="string">"aggClassEst: "</span>, aggClassEst.T</span><br><span class="line">        aggErrors = multiply(sign(aggClassEst) != mat(classLabels).T, ones((m,<span class="number">1</span>)))</span><br><span class="line">        errorRate = aggErrors.sum()/m</span><br><span class="line">        <span class="keyword">print</span> <span class="string">"total error: "</span>,errorRate</span><br><span class="line">        <span class="keyword">if</span> errorRate == <span class="number">0.0</span>: <span class="keyword">break</span> <span class="comment"># 错误率等于0退出循环</span></span><br><span class="line">    <span class="keyword">return</span> weakClassArr, aggClassEst</span><br></pre></td></tr></table></figure>
+<p><em>运行结果</em></p>
+<p>经过5次迭代，错误率收敛为0。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="prompt">&gt;&gt;&gt; </span><span class="keyword">from</span> adaboost <span class="keyword">import</span> *</span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>data, label=loadsimpData()</span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>classifiArr = adaBoostTrainDS(data, label, <span class="number">9</span>)</span><br><span class="line">split: dim <span class="number">0</span>, thresh <span class="number">0.90</span>, thresh ineqal: lt, the weighted error <span class="keyword">is</span> <span class="number">0.500</span></span><br><span class="line">...</span><br><span class="line">split: dim <span class="number">1</span>, thresh <span class="number">2.10</span>, thresh ineqal: gt, the weighted error <span class="keyword">is</span> <span class="number">0.500</span></span><br><span class="line">classEst:  [[-<span class="number">1.</span>  <span class="number">1.</span> -<span class="number">1.</span> -<span class="number">1.</span>  <span class="number">1.</span> -<span class="number">1.</span>]]</span><br><span class="line">aggClassEst:  [[-<span class="number">0.80471896</span>  <span class="number">0.80471896</span> -<span class="number">0.80471896</span> -<span class="number">0.80471896</span>  <span class="number">0.80471896</span> -<span class="number">0.80471896</span>]]</span><br><span class="line">total error:  <span class="number">0.166666666667</span></span><br><span class="line">split: dim <span class="number">0</span>, thresh <span class="number">0.90</span>, thresh ineqal: lt, the weighted error <span class="keyword">is</span> <span class="number">0.300</span></span><br><span class="line">...</span><br><span class="line">split: dim <span class="number">1</span>, thresh <span class="number">2.10</span>, thresh ineqal: gt, the weighted error <span class="keyword">is</span> <span class="number">0.300</span></span><br><span class="line">classEst:  [[ <span class="number">1.</span>  <span class="number">1.</span> -<span class="number">1.</span> -<span class="number">1.</span> -<span class="number">1.</span>  <span class="number">1.</span>]]</span><br><span class="line">aggClassEst:  [[-<span class="number">0.11157178</span>  <span class="number">1.49786614</span> -<span class="number">1.49786614</span> -<span class="number">1.49786614</span>  <span class="number">0.11157178</span> -<span class="number">0.11157178</span>]]</span><br><span class="line">total error:  <span class="number">0.166666666667</span></span><br><span class="line">split: dim <span class="number">0</span>, thresh <span class="number">0.90</span>, thresh ineqal: lt, the weighted error <span class="keyword">is</span> <span class="number">0.375</span></span><br><span class="line">...</span><br><span class="line">split: dim <span class="number">1</span>, thresh <span class="number">2.10</span>, thresh ineqal: gt, the weighted error <span class="keyword">is</span> <span class="number">0.375</span></span><br><span class="line">classEst:  [[ <span class="number">1.</span> -<span class="number">1.</span> -<span class="number">1.</span> -<span class="number">1.</span> -<span class="number">1.</span> -<span class="number">1.</span>]]</span><br><span class="line">aggClassEst:  [[ <span class="number">0.2826569</span>   <span class="number">1.10363746</span> -<span class="number">1.89209482</span> -<span class="number">1.89209482</span> -<span class="number">0.2826569</span>  -<span class="number">0.50580046</span>]]</span><br><span class="line">total error:  <span class="number">0.166666666667</span></span><br><span class="line">split: dim <span class="number">0</span>, thresh <span class="number">0.90</span>, thresh ineqal: lt, the weighted error <span class="keyword">is</span> <span class="number">0.273</span></span><br><span class="line">...</span><br><span class="line">split: dim <span class="number">1</span>, thresh <span class="number">2.10</span>, thresh ineqal: gt, the weighted error <span class="keyword">is</span> <span class="number">0.273</span></span><br><span class="line">classEst:  [[-<span class="number">1.</span>  <span class="number">1.</span> -<span class="number">1.</span> -<span class="number">1.</span>  <span class="number">1.</span> -<span class="number">1.</span>]]</span><br><span class="line">aggClassEst:  [[-<span class="number">0.32923081</span>  <span class="number">1.71552517</span> -<span class="number">2.50398253</span> -<span class="number">2.50398253</span>  <span class="number">0.32923081</span> -<span class="number">1.11768817</span>]]</span><br><span class="line">total error:  <span class="number">0.166666666667</span></span><br><span class="line">split: dim <span class="number">0</span>, thresh <span class="number">0.90</span>, thresh ineqal: lt, the weighted error <span class="keyword">is</span> <span class="number">0.176</span></span><br><span class="line">...</span><br><span class="line">split: dim <span class="number">1</span>, thresh <span class="number">2.10</span>, thresh ineqal: gt, the weighted error <span class="keyword">is</span> <span class="number">0.176</span></span><br><span class="line">classEst:  [[ <span class="number">1.</span>  <span class="number">1.</span>  <span class="number">1.</span>  <span class="number">1.</span>  <span class="number">1.</span>  <span class="number">1.</span>]]</span><br><span class="line">aggClassEst:  [[ <span class="number">0.44099171</span>  <span class="number">2.48574769</span> -<span class="number">1.73376001</span> -<span class="number">1.73376001</span>  <span class="number">1.09945333</span> -<span class="number">0.34746565</span>]]</span><br><span class="line">total error:  <span class="number">0.0</span></span><br><span class="line"></span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>classifiArr[<span class="number">0</span>]</span><br><span class="line">([&#123;<span class="string">'dim'</span>: <span class="number">0</span>, <span class="string">'ineq'</span>: <span class="string">'lt'</span>, <span class="string">'thresh'</span>: <span class="number">1.40</span>, <span class="string">'alpha'</span>: <span class="number">0.8047189562170503</span>&#125;, \</span><br><span class="line">  &#123;<span class="string">'dim'</span>: <span class="number">1</span>, <span class="string">'ineq'</span>: <span class="string">'lt'</span>, <span class="string">'thresh'</span>: <span class="number">1.00</span>, <span class="string">'alpha'</span>: <span class="number">0.6931471805599453</span>&#125;, \</span><br><span class="line">  &#123;<span class="string">'dim'</span>: <span class="number">1</span>, <span class="string">'ineq'</span>: <span class="string">'lt'</span>, <span class="string">'thresh'</span>: <span class="number">1.22</span>, <span class="string">'alpha'</span>: <span class="number">0.3942286801821351</span>&#125;, \</span><br><span class="line">  &#123;<span class="string">'dim'</span>: <span class="number">0</span>, <span class="string">'ineq'</span>: <span class="string">'lt'</span>, <span class="string">'thresh'</span>: <span class="number">1.40</span>, <span class="string">'alpha'</span>: <span class="number">0.6118877158110577</span>&#125;, \</span><br><span class="line">  &#123;<span class="string">'dim'</span>: <span class="number">0</span>, <span class="string">'ineq'</span>: <span class="string">'lt'</span>, <span class="string">'thresh'</span>: <span class="number">0.90</span>, <span class="string">'alpha'</span>: <span class="number">0.7702225204735744</span>&#125;], \</span><br></pre></td></tr></table></figure>
+<p><strong>基于Adaboost的分类</strong></p>
+<p>一旦拥有了多个弱分类器以及其对应的$\alpha_i$值，只需要对编写算法最后一步即可。函数逐步引入弱分类器，分类结果越来越强。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">adaClassify</span><span class="params">(datToClass,classifierArr)</span>:</span></span><br><span class="line">    dataMatrix = mat(datToClass)</span><br><span class="line">    m = shape(dataMatrix)[<span class="number">0</span>]</span><br><span class="line">    aggClassEst = mat(zeros((m,<span class="number">1</span>)))</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(len(classifierArr)):</span><br><span class="line">        classEst = stumpClassify(dataMatrix,classifierArr[i][<span class="string">'dim'</span>],\</span><br><span class="line">                                 classifierArr[i][<span class="string">'thresh'</span>],\</span><br><span class="line">                                 classifierArr[i][<span class="string">'ineq'</span>])</span><br><span class="line">        aggClassEst += classifierArr[i][<span class="string">'alpha'</span>]*classEst</span><br><span class="line">        <span class="keyword">print</span> aggClassEst</span><br><span class="line">    <span class="keyword">return</span> sign(aggClassEst)</span><br></pre></td></tr></table></figure>
+<p><em>运行结果</em></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="prompt">&gt;&gt;&gt; </span>adaboost.adaClassify([<span class="number">0</span>,<span class="number">0</span>], classifiArr[<span class="number">0</span>])</span><br><span class="line">[[-<span class="number">0.80471896</span>]]</span><br><span class="line">[[-<span class="number">1.49786614</span>]]</span><br><span class="line">[[-<span class="number">1.89209482</span>]]</span><br><span class="line">[[-<span class="number">2.50398253</span>]]</span><br><span class="line">[[-<span class="number">3.27420505</span>]]</span><br><span class="line">matrix([[-<span class="number">1.</span>]])</span><br><span class="line"></span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>adaboost.adaClassify([[<span class="number">1</span>,<span class="number">1</span>],[<span class="number">2</span>,<span class="number">3</span>],[<span class="number">6</span>,<span class="number">7</span>]], classifiArr[<span class="number">0</span>])</span><br><span class="line">[[-<span class="number">0.80471896</span>] [ <span class="number">0.80471896</span>] [ <span class="number">0.80471896</span>]]</span><br><span class="line">[[-<span class="number">1.49786614</span>] [ <span class="number">1.49786614</span>] [ <span class="number">1.49786614</span>]]</span><br><span class="line">[[-<span class="number">1.89209482</span>] [ <span class="number">1.89209482</span>] [ <span class="number">1.89209482</span>]]</span><br><span class="line">[[-<span class="number">2.50398253</span>] [ <span class="number">2.50398253</span>] [ <span class="number">2.50398253</span>]]</span><br><span class="line">[[-<span class="number">1.73376001</span>] [ <span class="number">3.27420505</span>] [ <span class="number">3.27420505</span>]]</span><br><span class="line">matrix([[-<span class="number">1.</span>], [ <span class="number">1.</span>], [ <span class="number">1.</span>]])</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="AdaBoost应用">AdaBoost应用</h2><p>数据集依然是马疝病数据集，这里将通过组合弱分类器，看看预测结果是否更好。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">loadDataSet</span><span class="params">(fileName)</span>:</span> <span class="comment"># 读取数据</span></span><br><span class="line">    numFeat = len(open(fileName).readline().split(<span class="string">'\t'</span>))</span><br><span class="line">    dataMat = []</span><br><span class="line">    labelMat = []</span><br><span class="line">    fr = open(fileName)</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> fr.readlines():</span><br><span class="line">        lineArr =[]</span><br><span class="line">        curLine = line.strip().split(<span class="string">'\t'</span>)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(numFeat-<span class="number">1</span>):</span><br><span class="line">            lineArr.append(float(curLine[i]))</span><br><span class="line">        dataMat.append(lineArr)</span><br><span class="line">        labelMat.append(float(curLine[-<span class="number">1</span>]))</span><br><span class="line">    fr.close()</span><br><span class="line">    <span class="keyword">return</span> dataMat,labelMat</span><br></pre></td></tr></table></figure>
+<p><em>运行结果</em></p>
+<p>可以看出，40个弱分类器情况下，训练错误率0.197仅仅只有，13个测试样本被分错，测试错误率0.194。随着弱分类器数量增加，错误率越低。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="prompt">&gt;&gt;&gt; </span>data, labels = adaboost.loadDataSet(<span class="string">'horseColicTraining2.txt'</span>)</span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>classifiArray = adaboost.adaBoostTrainDS(data, labels)</span><br><span class="line">total error:  <span class="number">0.284280936455</span></span><br><span class="line">...</span><br><span class="line">total error:  <span class="number">0.197324414716</span></span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>datatest, labelstest = adaboost.loadDataSet(<span class="string">'horseColicTest2.txt'</span>)</span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>predict = adaboost.adaClassify(datatest, classifiArray[<span class="number">0</span>])</span><br><span class="line">...</span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>errArr = mat(ones((<span class="number">67</span>,<span class="number">1</span>)))</span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>errArr[predict!=mat(labelstest).T].sum()</span><br><span class="line"><span class="number">13.0</span></span><br></pre></td></tr></table></figure>
+<p>接下来，计算随着弱分类器数目增加，训练错误率和测试错误率变化情况。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> numpy <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> adaboost</span><br><span class="line">data, labels = adaboost.loadDataSet(<span class="string">'horseColicTraining2.txt'</span>)</span><br><span class="line">datatest, labelstest = adaboost.loadDataSet(<span class="string">'horseColicTest2.txt'</span>)</span><br><span class="line">Tran = []; Test = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>,<span class="number">200</span>):</span><br><span class="line">    classifiArray = adaboost.adaBoostTrainDS(data, labels, i)</span><br><span class="line">    errTra = classifiArray[<span class="number">2</span>]</span><br><span class="line">    Tran.append(errTra)</span><br><span class="line">    predict = adaboost.adaClassify(datatest, classifiArray[<span class="number">0</span>])</span><br><span class="line">    errArr = mat(ones((<span class="number">67</span>,<span class="number">1</span>)))</span><br><span class="line">    errTest = errArr[predict!=mat(labelstest).T].sum()/<span class="number">67</span></span><br><span class="line">    Test.append(errTest)</span><br></pre></td></tr></table></figure></p>
+<p><img src="/images/MachineLearninginAction/ml_chap7_errors.png" alt="errors"></p>
+<p>结果如图所示。随着弱分类器增加，我们会发现训练错误率一直在减小，但是测试错误率在达到了一个最小值之后又开始上升。这类现象称之为过拟合（overfitting）。过拟合原因一般是特征选取得不好，样本里的噪音数据干扰过大，可能存在隐单元的表示不唯一等。例如，数据集一开始有30%的缺失值，对于逻辑回归而言，这些缺失值的假设就是有效的，而对于决策树却可能并不合适。</p>
+<hr>
+<h2 id="非均衡分类问题">非均衡分类问题</h2><p>通常情况下，我们直接使用分类结果的错误率就可以做为该分类器的评判标准了，但是当在分类器训练时正例数目和反例数目不相等时，这种评价标准就会出现问题。这种现象也称为非均衡分类问题。在机器学习中，有一个普遍适用的称为<code>混淆矩阵</code>的工具，它可以帮助我们更好地了解分类中的错误。对于一个二类问题，它的混淆矩阵可以表示为：</p>
+<p><img src="/images/MachineLearninginAction/ml_chap7_confmatrix.png" alt="ConfMatrix"></p>
+<p>如果将一个正例判为正例，那么就可以认为产生了一个真正例（True Positive, TP），如果对一个反例正确地判为反例，则认为产生了一个真反例（True Negative, TN）。 相应地，另外两种情况分别称为伪反例（False Negative, FN）和伪正例（False Positive, FP）。根据TP，FP，FN和TN可以给出正确率（precise）、召回率（Recall）和ROC曲线的定义。</p>
+<p><strong>正确率和召回率</strong></p>
+<p>正确率等于TP/(TP+FP)，给出的是<u>预测为正例的样本中</u>的真正正例的比例，通俗讲就是<strong>被判为真的当中实际也为真的概率</strong>。召回率等于TP/(TP+FN)，给出的是预测为正例的真实正例占<u>所有真实正例</u>的比例，<strong>实际为真的当中被判为真的概率</strong>。</p>
+<p>我们可以很容易构造一个高正确率或高召回率的分类器，但是很难同时保证两者成立。如果将任何样本都判为正例，那么召回率达到百分之百而此时正确率很低。构建一个同时使正确率和召回率最大的分类器是具有挑战性的。</p>
+<p><strong>ROC曲线</strong></p>
+<p>另一个用于度量分类中的非均衡性的工具是ROC曲线。ROC曲线（receiver operating characteristic curve），是用来表示模型真正率和假正率之间关系的图形化方法。 它首先是由二战中的电子工程师和雷达工程师发明的，用来侦测战场上的敌军载具（飞机、船舰），也就是信号检测理论。之后很快就被引入了心理学来进行信号的知觉检测[7]。</p>
+<p><img src="/images/MachineLearninginAction/ml_chap7_roc.png" alt="RocCurve"></p>
+<p>如图所示，ROC曲线的横轴是伪正例的比例（假阳率=FP/(FP+TN)），而纵轴是真正例的比例（真阳率= TP/(TP+FN)）。ROC曲线给出的是当阈值变化时假阳率和真阳率的变化情况。虚线是随便给出的结果曲线。</p>
+<p>左下角的点所对应的是将所有样例判为反例的情况，而右上角的点对应的则是将所有样例判为正例的情况。在理想的情况下，最佳的分类器应该尽可能地处于左上角，这就意味着分类器在假阳率很低的同时获得了很高的真阳率。</p>
+<p>对不同的ROC曲线进行比较的一个指标是曲线下的面积（Area Under the Curve, AUC）。AUC给出的是分类器的平均性能值，当然它并不能完全代替对整条曲线的观察。一个完美分类器的AUC = 1.0，而虚线的AUC = 0.5。</p>
+<p>以下是对ROC曲线作图的代码：plotROC.py<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> numpy <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> adaboost</span><br><span class="line"></span><br><span class="line">datArr, labelArr = adaboost.loadDataSet(<span class="string">'horseColicTraining2.txt'</span>)</span><br><span class="line">classifierArray, aggClassEst = adaboost.adaBoostTrainDS(datArr, labelArr, num)</span><br><span class="line">predStrengths = aggClassEst.T</span><br><span class="line">classLabels = labelArr</span><br><span class="line"></span><br><span class="line">curstore0 = []; curstore1 = [] <span class="comment"># 记录所有坐标</span></span><br><span class="line">cur = (<span class="number">1.0</span>,<span class="number">1.0</span>) <span class="comment"># 初始坐标</span></span><br><span class="line">ySum = <span class="number">0.0</span> <span class="comment"># AUC</span></span><br><span class="line">numPosClas = sum(array(classLabels)==<span class="number">1.0</span>) <span class="comment"># 正例总数</span></span><br><span class="line">yStep = <span class="number">1.0</span>/float(numPosClas) <span class="comment"># 1/正例总数，步长</span></span><br><span class="line">xStep = <span class="number">1.0</span>/float(len(classLabels)-numPosClas) <span class="comment"># 1/反例总数，步长</span></span><br><span class="line">sortedIndicies = predStrengths.argsort() <span class="comment"># 获取排好序的索引，从小到大</span></span><br><span class="line">fig = plt.figure()</span><br><span class="line">fig.clf()</span><br><span class="line">ax = plt.subplot(<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>) <span class="comment"># 1个子图第1个，也可以写成 subplot(111)</span></span><br><span class="line"><span class="keyword">for</span> index <span class="keyword">in</span> sortedIndicies.tolist()[<span class="number">0</span>]:</span><br><span class="line">    curstore0.append(cur[<span class="number">0</span>])</span><br><span class="line">    curstore1.append(cur[<span class="number">1</span>])</span><br><span class="line">    <span class="keyword">if</span> classLabels[index] == <span class="number">1.0</span>:</span><br><span class="line">        delX = <span class="number">0</span>; delY = yStep</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        delX = xStep; delY = <span class="number">0</span></span><br><span class="line">        ySum += cur[<span class="number">1</span>] <span class="comment"># 计算AUC相当于积分\sum(y_i*xstep)</span></span><br><span class="line">    cur = (cur[<span class="number">0</span>]-delX, cur[<span class="number">1</span>]-delY)</span><br><span class="line">ax.plot(curstore0, curstore1, <span class="string">'r'</span>, linewidth=<span class="number">2.0</span>) <span class="comment"># 作ROC曲线</span></span><br><span class="line">ax.plot([<span class="number">0</span>,<span class="number">1</span>],[<span class="number">0</span>,<span class="number">1</span>],<span class="string">'b--'</span>, linewidth=<span class="number">2.0</span>) <span class="comment"># 作(0,0)到(1,1)的直线</span></span><br><span class="line">plt.xlabel(<span class="string">'False positive rate'</span>); plt.ylabel(<span class="string">'True positive rate'</span>)</span><br><span class="line">plt.title(<span class="string">'ROC curve for AdaBoost horse colic detection system'</span>)</span><br><span class="line">ax.axis([<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>])</span><br><span class="line">plt.show()</span><br><span class="line"><span class="keyword">print</span> <span class="string">"the Area Under the Curve is: "</span>, ySum*xStep <span class="comment"># 计算AUC相当于积分</span></span><br></pre></td></tr></table></figure></p>
+<p>运行结果<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="prompt">&gt;&gt;&gt; </span>num = <span class="number">10</span></span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>runfile(<span class="string">'plotROC.py'</span>)</span><br><span class="line">the Area Under the Curve <span class="keyword">is</span>:  <span class="number">0.858296963506</span></span><br><span class="line"></span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>num = <span class="number">40</span></span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>runfile(<span class="string">'plotROC.py'</span>)</span><br><span class="line">the Area Under the Curve <span class="keyword">is</span>:  <span class="number">0.89181911041</span></span><br></pre></td></tr></table></figure></p>
+<p>绿线是num=10，红线是num=40<br><img src="/images/MachineLearninginAction/ml_chap7_roc1.png" alt="RocCurveCP"></p>
+<hr>
+<h2 id="python相关">python相关</h2><p>numpy中<code>argsort函数</code>返回的是数组值从小到大的索引值</p>
+<p><strong>一维数组</strong><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="prompt">&gt;&gt;&gt; </span>x = np.array([<span class="number">3</span>, <span class="number">1</span>, <span class="number">2</span>])</span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>np.argsort(x) <span class="comment"># 按升序排列</span></span><br><span class="line">array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">0</span>])</span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>np.argsort(-x) <span class="comment"># 按降序排列</span></span><br><span class="line">array([<span class="number">0</span>, <span class="number">2</span>, <span class="number">1</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过索引值排序后的数组</span></span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>x[np.argsort(x)] </span><br><span class="line">array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>x[np.argsort(-x)]</span><br><span class="line">array([<span class="number">3</span>, <span class="number">2</span>, <span class="number">1</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment">## 另一种方式实现按降序排序</span></span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>a = x[np.argsort(x)]</span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>a[::-<span class="number">1</span>]</span><br><span class="line">array([<span class="number">3</span>, <span class="number">2</span>, <span class="number">1</span>]) </span><br><span class="line"><span class="comment"># 还有两个常用的函数sort和sorted</span></span><br></pre></td></tr></table></figure></p>
+<p><strong>二维数组</strong><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="prompt">&gt;&gt;&gt; </span>x = np.array([[<span class="number">0</span>, <span class="number">3</span>], [<span class="number">2</span>, <span class="number">2</span>]])</span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>np.argsort(x, axis=<span class="number">0</span>) <span class="comment"># 按列排序</span></span><br><span class="line">array([[<span class="number">0</span>, <span class="number">1</span>], [<span class="number">1</span>, <span class="number">0</span>]])</span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>np.argsort(x, axis=<span class="number">1</span>) <span class="comment"># 按行排序</span></span><br><span class="line">array([[<span class="number">0</span>, <span class="number">1</span>], [<span class="number">0</span>, <span class="number">1</span>]])</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h2 id="参考文献">参考文献</h2><p>[1] P. Harrington. <em>Machine Learning in Action</em>. Greenwich, CT, USA: Manning, 2012.<br>[2] Y. Freund, R. E. Schapire. A Decision-theoretic Generalization of On-line Learning and An Application to Boosting. <em>Journal of Computer and System Sciences</em>, 55(1), 119–139, 1997.<br>[3] <a href="http://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm" target="_blank" rel="external">http://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm</a><br>[4] <a href="http://blog.csdn.net/jlei_apple/article/details/8168856" target="_blank" rel="external">http://blog.csdn.net/jlei_apple/article/details/8168856</a><br>[5] Y. Freund, R. E. Schapire. Experiments With A New Boosting Algorithm[C] // <em>ICML</em>, 96: 148-156, 1996.<br>[6] <a href="http://blog.csdn.net/abcjennifer/article/details/7359370" target="_blank" rel="external">http://blog.csdn.net/abcjennifer/article/details/7359370</a><br>[7] <a href="https://en.wikipedia.org/wiki/Receiver_operating_characteristic" target="_blank" rel="external">https://en.wikipedia.org/wiki/Receiver_operating_characteristic</a></p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ROC曲线/" rel="tag">#ROC曲线</a>
+          
+            <a href="/tags/bagging/" rel="tag">#bagging</a>
+          
+            <a href="/tags/boosting/" rel="tag">#boosting</a>
+          
+            <a href="/tags/python/" rel="tag">#python</a>
+          
+            <a href="/tags/分类器评价/" rel="tag">#分类器评价</a>
+          
+            <a href="/tags/机器学习/" rel="tag">#机器学习</a>
+          
+            <a href="/tags/算法/" rel="tag">#算法</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/04/15/machine-learning-notes7/" rel="prev">预测数值型数据——回归</a>
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/03/17/machine-learning-notes5/" rel="next">支持向量机</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+            </div>
+
+            
+
+            
+              <div class="comments" id="comments">
+                
+                  <div class="ds-thread" data-thread-key="2015/03/25/machine-learning-notes6/"
+                       data-title="AdaBoost元算法" data-url="http://edmund.xyz/2015/03/25/machine-learning-notes6/">
+                  </div>
+                
+              </div>
+            
+        </div>
+
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/default_avatar.jpg" alt="Edmund" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">Edmund</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description"></p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">10</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">2</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/ycliuxinwei" target="_blank">GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://cn.linkedin.com/pub/xinwei-liu/74/2a9/136" target="_blank">Linkedin</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#AdaBoost历史"><span class="nav-number">1.</span> <span class="nav-text">AdaBoost历史</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AdaBoost"><span class="nav-number">2.</span> <span class="nav-text">AdaBoost</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AdaBoost应用"><span class="nav-number">3.</span> <span class="nav-text">AdaBoost应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#非均衡分类问题"><span class="nav-number">4.</span> <span class="nav-text">非均衡分类问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#python相关"><span class="nav-number">5.</span> <span class="nav-text">python相关</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献"><span class="nav-number">6.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+    </main>
+
+    <footer id="footer" class="footer">
+        <div class="footer-inner">
+            <div class="copyright" >
+  
+  &copy; &nbsp;  2014 - 
+  <span itemprop="copyrightYear">2015</span>
+  <span class="with-love">
+    <i class="icon-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Edmund</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+
+        </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+</div>
+
+<script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"edmund"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+    
+  
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.4"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.4"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.4" id="motion.global"></script>
+
+
+
+  <script type="text/javascript" src="/js/search-toggle.js"></script>
+
+
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.4" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+          var self = this;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      $(indicator).velocity('stop').velocity({
+        opacity: action === 'show' ? 0.4 : 0
+      }, { duration: 100 });
+    }
+
+  });
+</script>
+
+
+  <script type="text/javascript" id="sidebar.nav">
+    $(document).ready(function () {
+      var html = $('html');
+
+      $('.sidebar-nav li').on('click', function () {
+        var item = $(this);
+        var activeTabClassName = 'sidebar-nav-active';
+        var activePanelClassName = 'sidebar-panel-active';
+        if (item.hasClass(activeTabClassName)) {
+          return;
+        }
+
+        var currentTarget = $('.' + activePanelClassName);
+        var target = $('.' + item.data('target'));
+
+        currentTarget.velocity('transition.slideUpOut', 200, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', 200)
+            .addClass(activePanelClassName);
+        });
+
+        item.siblings().removeClass(activeTabClassName);
+        item.addClass(activeTabClassName);
+      });
+
+      $('.post-toc a').on('click', function (e) {
+        e.preventDefault();
+        var offset = $(escapeSelector(this.getAttribute('href'))).offset().top;
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        });
+      });
+
+      // Expand sidebar on post detail page by default, when post has a toc.
+      var $tocContent = $('.post-toc-content');
+      if (isDesktop() && CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    });
+  </script>
+
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        if (CONFIG.sidebar === 'always') {
+            displaySidebar();
+        }
+    });
+</script>
+
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+
+
+
+
+
+<!-- lazyload -->
+<script type="text/javascript" src="/js/lazyload.js"></script>
+<script type="text/javascript">
+    jQuery(function () {
+        jQuery("#posts img").lazyload({
+            placeholder: "/images/loading.gif",
+            effect: "fadeIn"
+        });
+    });
+</script>
+</body>
+</html>
